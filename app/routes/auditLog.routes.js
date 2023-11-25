@@ -1,5 +1,5 @@
 const { authJwt } = require("../middleware");
-const controller = require("../controllers/card.controller");
+const controller = require("../controllers/auditLog.controller");
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -10,6 +10,6 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/cardtrack/all", controller.getCardTracking);
-  app.put("/api/cardtrack/:id", controller.updateCardTracking);
+  app.get("/api/auditlog/all", controller.getAllAuditLogs);
+  app.get("/api/auditlog/card/:id", controller.getAuditLogsForCard);
 };

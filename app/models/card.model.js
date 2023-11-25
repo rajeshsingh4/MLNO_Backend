@@ -1,5 +1,10 @@
 module.exports = (sequelize, Sequelize) => {
   const Cards = sequelize.define("cards", {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
     Bank: {type: Sequelize.STRING},
     Date: {type: Sequelize.DATE},
     Product: {type: Sequelize.DATE},
@@ -49,7 +54,14 @@ module.exports = (sequelize, Sequelize) => {
     Field_6: {type: Sequelize.DATE},
     Field_7: {type: Sequelize.DATE},
     Bureau_Status: {type: Sequelize.TEXT},
-
+    createdAt: {
+      type: Sequelize.DATE,
+      defaultValue: new Date(),
+    },
+    updatedAt: {
+      type: Sequelize.DATE,
+      defaultValue: new Date(),
+    }
   });
 
   return Cards;

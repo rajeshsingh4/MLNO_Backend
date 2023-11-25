@@ -13,16 +13,16 @@ verifyToken = (req, res, next) => {
   }
 
   jwt.verify(token,
-            config.secret,
-            (err, decoded) => {
-              if (err) {
-                return res.status(401).send({
-                  message: "Unauthorized!",
-                });
-              }
-              req.userId = decoded.id;
-              next();
-            });
+    config.secret,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).send({
+          message: "Unauthorized!",
+        });
+      }
+      req.userId = decoded.id;
+      next();
+    });
 };
 
 isAdmin = (req, res, next) => {
