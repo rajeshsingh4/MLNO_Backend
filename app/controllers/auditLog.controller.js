@@ -17,6 +17,9 @@ exports.getAuditLogsForCard = async (req, res) => {
       where: {
         cardId: req.params.id
       },
+      order: [
+        ['createdAt', 'DESC']
+      ]
     });
     res.json(cardLogs);
   } catch (error) {
