@@ -11,4 +11,5 @@ module.exports = function(app) {
   });
 
   app.get("/api/fileList/all", controller.getFileTracking);
+  app.get("/api/fileList/:id", controller.getFileTrackingById);
 };

@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
     DataProcessor: {type: Sequelize.STRING},
     BureauName: {type: Sequelize.STRING},
     FileAttribute: {type: Sequelize.STRING},
-    CuffOffTime: {type: Sequelize.DATE},
+    CutOffTime: {type: Sequelize.DATE},
     FileUploadTime: {
       type: Sequelize.DATE,
       defaultValue: new Date(),

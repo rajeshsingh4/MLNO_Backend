@@ -11,10 +11,24 @@ var bcrypt = require("bcryptjs");
 
 exports.getFileTracking = async (req, res) => {
   try {
-    const cardtracking = await FileMaster.findAll({
+    const allFiles = await FileMaster.findAll({
       include: [{model: Card}]
     });
-    res.json(cardtracking);
+    res.json(allFiles);
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+};
+
+exports.getFileTrackingById = async (req, res) => {
+  try {
+    const fileDetailsByFileId = await FileMaster.findOne({
+      where: {
+        id: req.params.id
+      },
+      include: [{model: Card}]
+    });
+    res.json(fileDetailsByFileId);
   } catch (error) {
     res.json({ message: error.message });
   }
