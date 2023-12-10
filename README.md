@@ -60,5 +60,7 @@ node server.js
 ```
 
 
-npx sequelize db:seed:all
+
 npx sequelize db:seed:undo
+ALTER TABLE filemasters AUTO_INCREMENT = 1
+npx sequelize db:seed:all
