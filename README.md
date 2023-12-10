@@ -58,3 +58,7 @@ npm install
 ```
 node server.js
 ```
+
+
+npx sequelize db:seed:all
+npx sequelize db:seed:undo
