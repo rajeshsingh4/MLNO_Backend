@@ -24,6 +24,7 @@ db.sequelize = sequelize;
 
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.role = require("../models/role.model.js")(sequelize, Sequelize);
+db.fileMaster = require("../models/fileMaster.model.js")(sequelize, Sequelize);
 db.card = require("../models/card.model.js")(sequelize, Sequelize);
 db.auditLog = require("../models/auditLog.model.js")(sequelize, Sequelize);
 db.cardUpdates = require("../models/cardUpdates.model.js")(sequelize, Sequelize);
@@ -35,6 +36,9 @@ db.user.belongsToMany(db.role, {
   through: "user_roles"
 });
 
-db.ROLES = ["user", "admin", "moderator"];
+db.fileMaster.hasMany(db.card,);
+db.card.belongsTo(db.fileMaster);
+
+db.ROLES = ["user", "admin", "moderator",];
 
 module.exports = db;

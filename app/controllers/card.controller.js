@@ -37,7 +37,7 @@ exports.updateCardTracking = async (req, res) => {
     console.log("audit log entry created ", auditLogRecord);
     // update the current record
     const updatedTracking = await Card.update(
-      { ...reqPayload },
+      reqPayload,
       {
         where: {
           id: cardId,
