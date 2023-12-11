@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-  const FileMaster = sequelize.define("fileMaster", {
+  const FileMaster = sequelize.define("fileMasters", {
     id: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
     DataProcessor: {type: Sequelize.STRING},
     BureauName: {type: Sequelize.STRING},
     FileAttribute: {type: Sequelize.STRING},
-    CutOffTime: {type: Sequelize.DATE},
+   CutOffTime : {type: Sequelize.DATE},
     FileUploadTime: {
       type: Sequelize.DATE,
       defaultValue: new Date(),

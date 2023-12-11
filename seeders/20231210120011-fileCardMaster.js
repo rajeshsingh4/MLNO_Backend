@@ -5,23 +5,23 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     
 
-    var SeedfileMasters = generateFakeFiles('hdfc',5);
+    /* var SeedfileMasters = generateFakeFiles('hdfc',5);
     await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {});
     SeedfileMasters = generateFakeFiles('icici',5);
-    await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {});
+    await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {}); */
+    
 
-    var Seedcards = generateFakeCards(1000);
+    var Seedcards = generateFakeCards(100);
 
-    await queryInterface.bulkInsert('cards', Seedcards, {});
+   await queryInterface.bulkInsert('cards', Seedcards, {});
  
 
   },
 
   async down (queryInterface, Sequelize) {
-    queryInterface.sequelize.query('ALTER TABLE fileMasters AUTO_INCREMENT = 1');
+     queryInterface.sequelize.query('ALTER TABLE fileMasters AUTO_INCREMENT = 1');
     await queryInterface.bulkDelete('fileMasters', null, {});
-    await queryInterface.bulkDelete('cards', null, {});
-    queryInterface.sequelize.query('ALTER TABLE cards AUTO_INCREMENT = 1');
+    await queryInterface.bulkDelete('cards', null, {});;
     
   }
 };
@@ -37,7 +37,7 @@ function generateFakeFiles(bank,count) {
         DataProcessor: faker.lorem.word(6),
         BureauName:'BureauName_'+faker.random.arrayElement(['a', 'b', 'c']),
         FileAttribute:'',
-        CuffOffTime:faker.date.recent('100')
+        CutOffTime:faker.date.recent('100')
       });
   }
   
@@ -47,7 +47,7 @@ function generateFakeFiles(bank,count) {
         DataProcessor: faker.lorem.word(6),
         BureauName:'BureauName_'+faker.random.arrayElement(['a', 'b', 'c']),
         FileAttribute:'',
-        CuffOffTime: faker.date.soon('2')
+        CutOffTime: faker.date.soon('2')
       });
   }
   console.log('======= files =====',files);
@@ -65,20 +65,27 @@ function generateFakeCards(count){
       Bank: faker.random.arrayElement(["IDFC", "HDFC", "SBI"]),
       Date:new Date(),
      
-      Address1: faker.address.Address1,
-      Address2:faker.address.Address2,
-      Address3: faker.address.Address3,
-      City: faker.address.City,
-      State: faker.address.State,
+      Address1:'Address1_'+faker.lorem.word(2),
+      Address2: 'Address2_'+faker.lorem.word(2),
+      Address3: 'Address3_'+faker.lorem.word(2),
+      City: 'Add_c_'+faker.lorem.word(2),
+      State: 'Address_s_'+faker.lorem.word(2),
      
-      AWB_No: faker.internet.AWB_No,
-      RTO_Address1:  faker.address.Address1,
-      RTO_Address2:  faker.address.Address2,
-      RTO_Address3:  faker.address.Address3,
+      AWB_No: 'AWB_'+faker.lorem.word(5),
+      RTO_Address1:  'RTO1'+faker.lorem.word(2),
+      RTO_Address2:  'RTO2'+faker.lorem.word(2),
+      RTO_Address3:  'RTO3'+faker.lorem.word(2),
+      Product: faker.random.arrayElement(['VISA Master', 'VISA Master', 'Platinum']),
+      Logo: faker.random.arrayElement(['FPL', 'PPL', 'GPL']),
+      Scheme: faker.random.arrayElement(['VISA', 'MC', 'AMEX','JCB','CUP']),
      
       Courier_Code:'Courier_'+faker.random.arrayElement(['a', 'b', 'c']),
-      
-      fileMasterId: randomIntFromInterval(1,10) 
+      Name:faker.lorem.word(7),
+      fileMasterId: randomIntFromInterval(1,10) ,
+      Bureau_Status : randomIntFromInterval(0,5) ,
+      Courier_Status :  randomIntFromInterval(0,5) ,
+      NRWC_Flag: faker.random.arrayElement(['N', 'R', 'W','C']),
+      createdAt: faker.date.recent('100')
      })
   }
 
