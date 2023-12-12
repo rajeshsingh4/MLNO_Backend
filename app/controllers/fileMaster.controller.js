@@ -27,10 +27,9 @@ function getTATExtraDays(nrwc_type,totalDaysPassed){
 }
 
 function updateTATForFiles(allFiles){
- // console.log('--------------- updateTATForFiles ----------------  ')
- // console.log(allFiles.length);
+
   for(let i=0;i<allFiles.length;i++){
-       // console.log('---------------- File Data --------',allFiles[i]);
+    
       let startDateForCardTAT = allFiles[i].dataValues.CutOffTime;
 
       allFiles[i].dataValues.bureauwithintat = 0;
@@ -40,9 +39,9 @@ function updateTATForFiles(allFiles){
       allFiles[i].dataValues.totalCards = allFiles[i].cards.length;
 
       for(let j=0;j<allFiles[i].cards.length;j++){
-        allFiles[i].cards[j].dataValues['Bureau_Total_TAT_Days']= ( new Date() - new Date(startDateForCardTAT) )/(1000 * 60 * 60 * 24);
+        allFiles[i].cards[j].dataValues['Bureau_Total_TAT_Days']= Math.floor(( new Date() - new Date(startDateForCardTAT) )/(1000 * 60 * 60 * 24));
         if(allFiles[i].cards[j].dataValues.Bureau_Status === 1){
-          allFiles[i].cards[j].dataValues['Courier_Total_TAT_Days']= ( new Date() - new Date(allFiles[i].cards[j].dataValues.Bureau_Status_Timestamp) )/(1000 * 60 * 60 * 24);
+          allFiles[i].cards[j].dataValues['Courier_Total_TAT_Days']= Math.floor(( new Date() - new Date(allFiles[i].cards[j].dataValues.Bureau_Status_Timestamp) )/(1000 * 60 * 60 * 24));
           allFiles[i].cards[j].dataValues['Courier_TAT_Extra_Days_Passed'] = allFiles[i].cards[j].dataValues['Courier_Total_TAT_Days'];
           allFiles[i].dataValues.courieroutsidetat =  allFiles[i].dataValues.courieroutsidetat + 1;
         }else{

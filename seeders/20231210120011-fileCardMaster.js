@@ -4,18 +4,23 @@ var faker = require('faker');
 module.exports = {
   async up (queryInterface, Sequelize) {
     
-
-    /* var SeedfileMasters = generateFakeFiles('hdfc',5);
-    await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {});
-    SeedfileMasters = generateFakeFiles('icici',5);
-    await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {}); */
+    var bankName= 'HDFC';
+    var productName=faker.random.arrayElement(['VISA Master', 'VISA Master', 'Platinum']);
     
+    var SeedfileMasters = generateFakeFiles(bankName,1);
+    await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {});
+    var Seedcards = generateFakeCards(bankName,productName,4,100);
+    
+    await queryInterface.bulkInsert('cards', Seedcards, {});
 
-    var Seedcards = generateFakeCards(100);
-
-   await queryInterface.bulkInsert('cards', Seedcards, {});
- 
-
+  
+    bankName= 'ICICI';
+    productName=faker.random.arrayElement(['VISA Master', 'VISA Master', 'Platinum']);
+   
+    SeedfileMasters = generateFakeFiles(bankName,5);
+    Seedcards = generateFakeCards(bankName,productName,8,100);
+    await queryInterface.bulkInsert('fileMasters', SeedfileMasters, {});
+    await queryInterface.bulkInsert('cards', Seedcards, {});
   },
 
   async down (queryInterface, Sequelize) {
@@ -58,11 +63,11 @@ function randomIntFromInterval(min, max) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function generateFakeCards(count){
+function generateFakeCards(bankName,product,maxId,count){
   let cardsList=[];
   for(let i=0;i<count;i++){
      cardsList.push({
-      Bank: faker.random.arrayElement(["IDFC", "HDFC", "SBI"]),
+      Bank: bankName,
       Date:new Date(),
      
       Address1:'Address1_'+faker.lorem.word(2),
@@ -75,17 +80,17 @@ function generateFakeCards(count){
       RTO_Address1:  'RTO1'+faker.lorem.word(2),
       RTO_Address2:  'RTO2'+faker.lorem.word(2),
       RTO_Address3:  'RTO3'+faker.lorem.word(2),
-      Product: faker.random.arrayElement(['VISA Master', 'VISA Master', 'Platinum']),
+      Product: product ,
       Logo: faker.random.arrayElement(['FPL', 'PPL', 'GPL']),
       Scheme: faker.random.arrayElement(['VISA', 'MC', 'AMEX','JCB','CUP']),
      
       Courier_Code:'Courier_'+faker.random.arrayElement(['a', 'b', 'c']),
       Name:faker.lorem.word(7),
-      fileMasterId: randomIntFromInterval(1,10) ,
+      fileMasterId: randomIntFromInterval(1,maxId) ,
       Bureau_Status : randomIntFromInterval(0,5) ,
       Courier_Status :  randomIntFromInterval(0,5) ,
       NRWC_Flag: faker.random.arrayElement(['N', 'R', 'W','C']),
-      createdAt: faker.date.recent('100')
+      createdAt: faker.date.recent('30')
      })
   }
 

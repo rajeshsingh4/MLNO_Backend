@@ -1,10 +1,18 @@
 module.exports = {
     accepted_TAT_Bureau:{
-        N:60,
-        R:30,
-        W:10,
-        C:65
+        N:1,
+        R:1,
+        W:7,
+        C:30
     },
     accepted_TAT_courier: 3
 
 }
+
+
+/*
+ N:0,
+        R:0,
+        W:7,
+        C:30
+*/
