@@ -22,6 +22,42 @@ exports.getFileTracking = async (req, res) => {
   }
 };
 
+
+//search for specific Bank
+exports.getBureauTracking = async (req, res) => {
+  try {
+    const allFiles = await FileMaster.findAll({
+      include: [{model: Card}]
+    });
+    const allFilesUpdated = updateTATForFiles(allFiles);
+    const bureauData = updateBureauGrouping(allFilesUpdated);
+    console.log('------------------------------------>>>',bureauData);
+    res.json(bureauData);
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+};
+
+function updateBureauGrouping(allFilesData){
+
+  const BureauGrouping={};
+  for(let i=0;i<allFilesData.length;i++){
+    console.log('---- cards ----',allFilesData[i]);
+    if(BureauGrouping[allFilesData[i].dataValues['BureauName']]=== undefined){
+      BureauGrouping[allFilesData[i].dataValues['BureauName']]={};
+      BureauGrouping[allFilesData[i].dataValues['BureauName']]['bureauoutsidetat'] = allFilesData[i].dataValues['bureauoutsidetat'];
+      BureauGrouping[allFilesData[i].dataValues['BureauName']]['bureauwithintat'] = allFilesData[i].dataValues['bureauwithintat'];
+
+    }else{
+      BureauGrouping[allFilesData[i].dataValues['BureauName']]['bureauoutsidetat'] = BureauGrouping[allFilesData[i].dataValues['BureauName']]['bureauoutsidetat']+ allFilesData[i].dataValues['bureauoutsidetat'];
+      BureauGrouping[allFilesData[i].dataValues['BureauName']]['bureauwithintat'] = BureauGrouping[allFilesData[i].dataValues['BureauName']]['bureauwithintat']  + allFilesData[i].dataValues['bureauwithintat'];
+
+    }
+   
+  }
+  return BureauGrouping;
+}
+
 function getTATExtraDays(nrwc_type,totalDaysPassed){
   return Math.floor(totalDaysPassed - configNRWC.accepted_TAT_Bureau[nrwc_type])
 }
@@ -87,6 +123,8 @@ function updateTATForFiles(allFiles){
 
   return allFiles;
 }
+
+
 exports.getFileTrackingById = async (req, res) => {
   try {
     const fileDetailsByFileId = await FileMaster.findOne({
