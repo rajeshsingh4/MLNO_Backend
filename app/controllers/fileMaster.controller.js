@@ -70,11 +70,13 @@ function updateTATForFiles(allFiles){
 
       allFiles[i].dataValues.bureauwithintat = 0;
       allFiles[i].dataValues.bureauoutsidetat = 0;
+      allFiles[i].dataValues.bureauWIP = 0;
       allFiles[i].dataValues.courierwithintat = 0;
       allFiles[i].dataValues.courieroutsidetat = 0;
       allFiles[i].dataValues.totalCards = allFiles[i].cards.length;
       allFiles[i].dataValues['courieroutsidetat_list']=[];
       allFiles[i].dataValues['bureauoutsidetat_list'] =[];
+      allFiles[i].dataValues['bureauoutwip_list'] =[];
 
       for(let j=0;j<allFiles[i].cards.length;j++){
         allFiles[i].cards[j].dataValues['Bureau_Total_TAT_Days']= Math.floor(( new Date() - new Date(startDateForCardTAT) )/(1000 * 60 * 60 * 24));
@@ -84,10 +86,12 @@ function updateTATForFiles(allFiles){
           allFiles[i].dataValues.courieroutsidetat =  allFiles[i].dataValues.courieroutsidetat + 1;
           allFiles[i].dataValues['courieroutsidetat_list'].push(allFiles[i].cards[j].dataValues.id)
         }else{
+          console.log('----- B statue not 1 ---->',allFiles[i].cards[j].dataValues.id,allFiles[i].cards[j].dataValues.Bureau_Status);
           allFiles[i].cards[j].dataValues['Courier_Total_TAT_Days']=null;
           allFiles[i].cards[j].dataValues['Courier_TAT_Extra_Days_Passed'] =null;
           allFiles[i].cards[j].dataValues['Bureau_TAT_Extra_Days_Passed'] = getTATExtraDays(allFiles[i].cards[j].dataValues['NRWC_Flag'], allFiles[i].cards[j].dataValues['Bureau_Total_TAT_Days']);
-      
+          allFiles[i].dataValues.bureauWIP =  allFiles[i].dataValues.bureauWIP + 1;
+          allFiles[i].dataValues['bureauoutwip_list'].push(allFiles[i].cards[j].dataValues.id);
         }
 
         if(allFiles[i].cards[j].dataValues['Bureau_TAT_Extra_Days_Passed']>0){
