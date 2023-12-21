@@ -13,5 +13,6 @@ module.exports = function(app) {
   app.get("/api/fileList/all", controller.getFileTracking);
   app.get("/api/fileList/:id", controller.getFileTrackingById);
   app.get("/api/bureauTAT/all", controller.getBureauTracking);
+  app.get("/api/bureauData/:id", controller.fetchBureauData);
   
 };

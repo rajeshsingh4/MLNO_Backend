@@ -31,12 +31,147 @@ exports.getBureauTracking = async (req, res) => {
     });
     const allFilesUpdated = updateTATForFiles(allFiles);
     const bureauData = updateBureauGrouping(allFilesUpdated);
-    console.log('------------------------------------>>>',bureauData);
+   // console.log('------------------------------------>>>',bureauData);
     res.json(bureauData);
   } catch (error) {
     res.json({ message: error.message });
   }
 };
+
+function getBureauSummary(allFilesData,bureauId){
+  const bureauSummary = {
+    allFiles:[],
+    bureauId: bureauId,
+    oldestDataSince:'',
+    oldestDataDayCount:0,
+    overAllDataAllocated:0,
+    overCardsWithInTAT:0,
+    overCardsOutsideTAT:0,
+    overCardsWithInTATPercentage:0,
+    overCardsOutsideTATPercentage:0,
+    dateWiseSummary:[]
+  };  
+ 
+ 
+
+  dateWiseSummaryObj = {
+    'TotalCountAllocated':0,
+    'countDispatched':0,
+    'countPending':0,
+    'percentPending':0,
+    'beyondTAT':0,
+    'beyondTATPercentage':0,
+    'overallPercentageWithinTAT':0,
+    'willBeOutsideTATToday':0,
+    'willBeOutsideTATTommorow':0,
+  };
+
+
+  bureauSummary['allFiles'] = allFilesData;
+  bureauSummary['dateWiseSummary'].push(dateWiseSummaryObj) 
+ // console.log('--------------------- Test calling getolderdaat------------------');
+  //Search for oldest outside TAT Date
+  // bureauSummary.allFiles
+  oldestDate = getOldestTATDate(allFilesData);
+  bureauSummary['oldestDate'] = oldestDate;
+ // console.log('---------------------///// Test calling getolderdaat------------------>>>>',bureauSummary['oldestDate']);
+
+  return bureauSummary;
+}
+
+function getOldestTATDate(fileList){
+  //search for file have=ing heighest Bureau_TAT_Extra_Days_Passed
+ // console.log('--------------------- INSIDE Test calling getolderdaat------------------',fileList[0].dataValues.cards)
+  let maxTATVal=0;
+  let maxDetailData={};
+  let TATWiseGroup = {}
+  let TATDateLIST=[]
+  for(let i=0;i<fileList.length;i++){
+    for(let k=0;k<fileList[i].cards.length;k++){
+      if(maxTATVal < fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed){
+        maxTATVal = fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed;
+        maxDetailData['oldestDataSet'] =  fileList[i].cards[k].dataValues;
+      }
+
+      // IF TAT is already Present in List then don't push in list,
+      //    fetch previous Data and do average
+      // if Not Present , push in list add in TATWiseGroup
+      if(TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]){
+        let TotalCountAllocated = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['TotalCountAllocated']+ fileList[i].dataValues.totalCards ;
+        let countDispatched = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['countDispatched']+  fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat;
+        let countPending  = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['countPending'] + (fileList[i].dataValues.totalCards - (fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat) );
+        let beyondTAT = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['beyondTAT'] + fileList[i].dataValues.bureauoutsidetat;
+        let withinTAT = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['withinTAT'] + fileList[i].dataValues.bureauwithintat;
+
+      TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]={
+          'TotalCountAllocated':  TotalCountAllocated,
+          'countDispatched': countDispatched,
+          'countPending': countPending,
+          'percentPending':0,
+          'beyondTAT': beyondTAT,
+          'withinTAT':withinTAT,
+          'beyondTATPercentage':0,
+          'overallPercentageWithinTAT':0,
+          'willBeOutsideTATToday':0,
+          'willBeOutsideTATTommorow':0,
+        }
+        
+      }else{
+
+        if(fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed){
+          TATDateLIST.push(fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed)
+        }
+      
+       
+        let TotalCountAllocated = fileList[i].dataValues.totalCards ;
+        let countDispatched = fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat;
+        let countPending  = fileList[i].dataValues.totalCards - (fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat) ;
+        let beyondTAT = fileList[i].dataValues.bureauoutsidetat;
+        let withinTAT = fileList[i].dataValues.bureauwithintat;
+        
+        TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]={
+            'TotalCountAllocated': TotalCountAllocated ,
+            'countDispatched': countDispatched,
+            'countPending': countPending,
+            'percentPending':0,
+            'beyondTAT': beyondTAT,
+            'withinTAT': withinTAT,
+            'beyondTATPercentage':0,
+            'overallPercentageWithinTAT':0,
+            'willBeOutsideTATToday':0,
+            'willBeOutsideTATTommorow':0,
+        }
+      }
+     
+
+
+      
+     }        
+  }
+  
+  TATDateLIST.sort(function(a, b){return a-b});
+
+  maxDetailData['TATWiseGroup']=TATWiseGroup;
+  maxDetailData['TATDateLIST']=TATDateLIST;
+
+  console.log('-------------------------- TATDateLIST --------------------------',TATDateLIST)
+  return maxDetailData;
+}
+
+exports.fetchBureauData = async (req, res) => {
+   console.log("------->>> BureauId --->",req.params.id);
+   const allFiles = await FileMaster.findAll({
+    where: {
+      BureauName: req.params.id
+    },
+    include: [{model: Card}]
+  });
+  const allFilesUpdated = updateTATForFiles(allFiles);
+
+  const bureauSummaryData = getBureauSummary(allFilesUpdated,req.params.id)
+  
+  res.json(bureauSummaryData); 
+}
 
 function updateBureauGrouping(allFilesData){
 
@@ -86,7 +221,7 @@ function updateTATForFiles(allFiles){
           allFiles[i].dataValues.courieroutsidetat =  allFiles[i].dataValues.courieroutsidetat + 1;
           allFiles[i].dataValues['courieroutsidetat_list'].push(allFiles[i].cards[j].dataValues.id)
         }else{
-          console.log('----- B statue not 1 ---->',allFiles[i].cards[j].dataValues.id,allFiles[i].cards[j].dataValues.Bureau_Status);
+          // console.log('----- B statue not 1 ---->',allFiles[i].cards[j].dataValues.id,allFiles[i].cards[j].dataValues.Bureau_Status);
           allFiles[i].cards[j].dataValues['Courier_Total_TAT_Days']=null;
           allFiles[i].cards[j].dataValues['Courier_TAT_Extra_Days_Passed'] =null;
           allFiles[i].cards[j].dataValues['Bureau_TAT_Extra_Days_Passed'] = getTATExtraDays(allFiles[i].cards[j].dataValues['NRWC_Flag'], allFiles[i].cards[j].dataValues['Bureau_Total_TAT_Days']);
