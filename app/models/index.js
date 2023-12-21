@@ -36,7 +36,7 @@ db.user.belongsToMany(db.role, {
   through: "user_roles"
 });
 
-db.fileMaster.hasMany(db.card,);
+db.fileMaster.hasMany(db.card);
 db.card.belongsTo(db.fileMaster);
 
 db.ROLES = ["user", "admin", "moderator",];
