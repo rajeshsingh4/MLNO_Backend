@@ -41,34 +41,13 @@ exports.getBureauTracking = async (req, res) => {
 function getBureauSummary(allFilesData,bureauId){
   const bureauSummary = {
     allFiles:[],
-    bureauId: bureauId,
-    oldestDataSince:'',
-    oldestDataDayCount:0,
-    overAllDataAllocated:0,
-    overCardsWithInTAT:0,
-    overCardsOutsideTAT:0,
-    overCardsWithInTATPercentage:0,
-    overCardsOutsideTATPercentage:0,
-    dateWiseSummary:[]
+    bureauId: bureauId
   };  
  
- 
-
-  dateWiseSummaryObj = {
-    'TotalCountAllocated':0,
-    'countDispatched':0,
-    'countPending':0,
-    'percentPending':0,
-    'beyondTAT':0,
-    'beyondTATPercentage':0,
-    'overallPercentageWithinTAT':0,
-    'willBeOutsideTATToday':0,
-    'willBeOutsideTATTommorow':0,
-  };
 
 
   bureauSummary['allFiles'] = allFilesData;
-  bureauSummary['dateWiseSummary'].push(dateWiseSummaryObj) 
+  // bureauSummary['dateWiseSummary'].push(dateWiseSummaryObj) 
  // console.log('--------------------- Test calling getolderdaat------------------');
   //Search for oldest outside TAT Date
   // bureauSummary.allFiles
@@ -76,6 +55,7 @@ function getBureauSummary(allFilesData,bureauId){
   bureauSummary['oldestDate'] = oldestDate;
  // console.log('---------------------///// Test calling getolderdaat------------------>>>>',bureauSummary['oldestDate']);
 
+ 
   return bureauSummary;
 }
 
@@ -93,17 +73,19 @@ function getOldestTATDate(fileList){
         maxDetailData['oldestDataSet'] =  fileList[i].cards[k].dataValues;
       }
 
+      let CutOffTime = new Date(fileList[i].dataValues.CutOffTime).toLocaleDateString();
+     // let CutOffTime = fileList[i].dataValues.CutOffTime;
       // IF TAT is already Present in List then don't push in list,
       //    fetch previous Data and do average
       // if Not Present , push in list add in TATWiseGroup
-      if(TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]){
-        let TotalCountAllocated = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['TotalCountAllocated']+ fileList[i].dataValues.totalCards ;
-        let countDispatched = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['countDispatched']+  fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat;
-        let countPending  = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['countPending'] + (fileList[i].dataValues.totalCards - (fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat) );
-        let beyondTAT = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['beyondTAT'] + fileList[i].dataValues.bureauoutsidetat;
-        let withinTAT = TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]['withinTAT'] + fileList[i].dataValues.bureauwithintat;
-
-      TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]={
+      if(TATWiseGroup[CutOffTime]){
+        let TotalCountAllocated = TATWiseGroup[CutOffTime]['TotalCountAllocated']+ fileList[i].dataValues.totalCards ;
+        let countDispatched = TATWiseGroup[CutOffTime]['countDispatched']+  fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat;
+        let countPending  = TATWiseGroup[CutOffTime]['countPending'] + (fileList[i].dataValues.totalCards - (fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat) );
+        let beyondTAT = TATWiseGroup[CutOffTime]['beyondTAT'] + fileList[i].dataValues.bureauoutsidetat;
+        let withinTAT = TATWiseGroup[CutOffTime]['withinTAT'] + fileList[i].dataValues.bureauwithintat;
+        
+      TATWiseGroup[CutOffTime]={
           'TotalCountAllocated':  TotalCountAllocated,
           'countDispatched': countDispatched,
           'countPending': countPending,
@@ -113,13 +95,14 @@ function getOldestTATDate(fileList){
           'beyondTATPercentage':0,
           'overallPercentageWithinTAT':0,
           'willBeOutsideTATToday':0,
-          'willBeOutsideTATTommorow':0,
+          'willBeOutsideTATTommorow':0,          
+          'dateAllocated':CutOffTime,
         }
         
       }else{
 
         if(fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed){
-          TATDateLIST.push(fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed)
+          TATDateLIST.push(CutOffTime)
         }
       
        
@@ -128,8 +111,8 @@ function getOldestTATDate(fileList){
         let countPending  = fileList[i].dataValues.totalCards - (fileList[i].dataValues.courieroutsidetat + fileList[i].dataValues.courierwithintat) ;
         let beyondTAT = fileList[i].dataValues.bureauoutsidetat;
         let withinTAT = fileList[i].dataValues.bureauwithintat;
-        
-        TATWiseGroup[fileList[i].cards[k].dataValues.Bureau_TAT_Extra_Days_Passed]={
+     
+        TATWiseGroup[CutOffTime]={
             'TotalCountAllocated': TotalCountAllocated ,
             'countDispatched': countDispatched,
             'countPending': countPending,
@@ -140,6 +123,7 @@ function getOldestTATDate(fileList){
             'overallPercentageWithinTAT':0,
             'willBeOutsideTATToday':0,
             'willBeOutsideTATTommorow':0,
+            'dateAllocated':CutOffTime,
         }
       }
      
@@ -148,13 +132,56 @@ function getOldestTATDate(fileList){
       
      }        
   }
+
+ // console.log('--------------------------BEFORE TATDateLIST --------------------------',TATDateLIST)
   
-  TATDateLIST.sort(function(a, b){return a-b});
+  // TATDateLIST.sort(function(a, b){return a-b});
+  TATDateLIST.sort(function(a, b) {
+    // Convert the date strings to Date objects
+    let dateA = new Date(a);
+    let dateB = new Date(b);
+
+    // Subtract the dates to get a value that is either negative, positive, or zero
+    return dateA - dateB;
+  });
+
+ // console.log('--------------------------AFTER TATDateLIST --------------------------',TATDateLIST)
+  /*   
+   
+    overAllDataAllocated:0,
+    overCardsWithInTAT:0,
+    overCardsOutsideTAT:0,
+    overCardsWithInTATPercentage:0,
+    overCardsOutsideTATPercentage:0,
+     'beyondTAT': beyondTAT,
+            'withinTAT': withinTAT,
+  */
+  maxDetailData['overAllDataAllocated'] =0;
+  maxDetailData['overCardsWithInTAT'] =0;
+  maxDetailData['overCardsOutsideTAT'] = 0;
+  maxDetailData['overCardsCountPending'] = 0;
+  
+  for (key in TATWiseGroup) {
+    // code block to be executed
+    console.log('---- key->>>>',key);
+    console.log('-------------------------- BEFORE overAllDataAllocated --------------------------', maxDetailData['overAllDataAllocated'])
+    TATWiseGroup[key]['percentPending'] = Math.floor((TATWiseGroup[key]['countPending'] /TATWiseGroup[key]['TotalCountAllocated'] )*100,1)
+    TATWiseGroup[key]['beyondTATPercentage'] = Math.floor((TATWiseGroup[key]['beyondTAT'] /TATWiseGroup[key]['TotalCountAllocated'] )*100,1)
+    TATWiseGroup[key]['overallPercentageWithinTAT'] = 100- TATWiseGroup[key]['beyondTATPercentage'] ;
+    maxDetailData['overAllDataAllocated'] =   maxDetailData['overAllDataAllocated'] +  TATWiseGroup[key]['TotalCountAllocated'];
+    maxDetailData['overCardsWithInTAT'] =  maxDetailData['overCardsWithInTAT'] +  TATWiseGroup[key]['withinTAT'];
+    maxDetailData['overCardsOutsideTAT'] =  maxDetailData['overCardsOutsideTAT'] +  TATWiseGroup[key]['beyondTAT'];
+    maxDetailData['overCardsCountPending']  = maxDetailData['overCardsCountPending']  + TATWiseGroup[key]['countPending'];
+    console.log('-------------------------- overAllDataAllocated --------------------------', maxDetailData['overAllDataAllocated'])
+  }
+
+  maxDetailData['overAllTotalCardWithInTATPercentage'] =  Math.floor(( maxDetailData['overCardsWithInTAT']/maxDetailData['overAllDataAllocated'] )*100,2);
+  maxDetailData['overAllTotalCardOutsideTATPercentage'] =  100- maxDetailData['overAllTotalCardWithInTATPercentage'];
 
   maxDetailData['TATWiseGroup']=TATWiseGroup;
   maxDetailData['TATDateLIST']=TATDateLIST;
 
-  console.log('-------------------------- TATDateLIST --------------------------',TATDateLIST)
+  // console.log('-------------------------- TATDateLIST --------------------------',TATWiseGroup)
   return maxDetailData;
 }
 
