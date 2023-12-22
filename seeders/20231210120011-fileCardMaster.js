@@ -42,7 +42,10 @@ function generateFakeFiles(bank,count) {
         DataProcessor: faker.lorem.word(6),
         BureauName:'BureauName_'+faker.random.arrayElement(['a', 'b', 'c']),
         FileAttribute:'',
-        CutOffTime:faker.date.recent('100')
+        CutOffTime:faker.date.recent('100'),
+        createdBy: randomIntFromInterval(1,6) ,
+        modifiedBy: randomIntFromInterval(1,6) ,
+        userId: randomIntFromInterval(1,6) ,
       });
   }
   
@@ -52,7 +55,10 @@ function generateFakeFiles(bank,count) {
         DataProcessor: faker.lorem.word(6),
         BureauName:'BureauName_'+faker.random.arrayElement(['a', 'b', 'c']),
         FileAttribute:'',
-        CutOffTime: faker.date.soon('2')
+        CutOffTime: faker.date.soon('2'),
+        createdBy: randomIntFromInterval(1,6) ,
+        modifiedBy: randomIntFromInterval(1,6) ,
+        userId: randomIntFromInterval(1,6) ,
       });
   }
   console.log('======= files =====',files);
@@ -90,7 +96,10 @@ function generateFakeCards(bankName,product,maxId,count){
       Bureau_Status : randomIntFromInterval(0,5) ,
       Courier_Status :  randomIntFromInterval(0,5) ,
       NRWC_Flag: faker.random.arrayElement(['N', 'R', 'W','C']),
-      createdAt: faker.date.recent('30')
+      createdAt: faker.date.recent('30'),
+      createdBy: randomIntFromInterval(1,maxId) ,
+      modifiedBy: randomIntFromInterval(1,maxId) ,
+      userId: randomIntFromInterval(1,maxId) ,
      })
   }
 
