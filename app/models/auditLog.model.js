@@ -1,23 +1,41 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, datatypes) => {
   const AuditLog = sequelize.define("audit_logs", {
     id: {
-      type: Sequelize.INTEGER,
+      type: datatypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    cardId: { type: Sequelize.INTEGER },
-    previous: { type: Sequelize.STRING },
-    current: { type: Sequelize.STRING },
-    createdBy: { type: Sequelize.STRING },
-    modifiedBy: { type: Sequelize.STRING },
+    cardId: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.cards,
+        key: "id",
+      },
+    },
+    previous: { type: datatypes.STRING },
+    current: { type: datatypes.STRING },
+    createdBy: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.users,
+        key: "id",
+      },
+    },
+    modifiedBy: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.users,
+        key: "id",
+      },
+    },
     createdAt: {
-      type: Sequelize.DATE,
+      type: datatypes.DATE,
       defaultValue: new Date(),
     },
     updatedAt: {
-      type: Sequelize.DATE,
+      type: datatypes.DATE,
       defaultValue: new Date(),
-    }
+    },
   });
   return AuditLog;
 };

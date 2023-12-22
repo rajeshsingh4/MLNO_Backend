@@ -1,27 +1,41 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, datatypes) => {
   const FileMaster = sequelize.define("fileMasters", {
     id: {
-      type: Sequelize.INTEGER,
+      type: datatypes.INTEGER,
       autoIncrement: true,
-      primaryKey: true
+      primaryKey: true,
     },
-    fileName: {type: Sequelize.STRING},
-    DataProcessor: {type: Sequelize.STRING},
-    BureauName: {type: Sequelize.STRING},
-    FileAttribute: {type: Sequelize.STRING},
-   CutOffTime : {type: Sequelize.DATE},
+    fileName: { type: datatypes.STRING },
+    DataProcessor: { type: datatypes.STRING },
+    BureauName: { type: datatypes.STRING },
+    FileAttribute: { type: datatypes.STRING },
+    CutOffTime: { type: datatypes.DATE },
     FileUploadTime: {
-      type: Sequelize.DATE,
+      type: datatypes.DATE,
       defaultValue: new Date(),
     },
+    createdBy: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.users,
+        key: "id",
+      },
+    },
+    modifiedBy: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.users,
+        key: "id",
+      },
+    },
     createdAt: {
-      type: Sequelize.DATE,
+      type: datatypes.DATE,
       defaultValue: new Date(),
     },
     updatedAt: {
-      type: Sequelize.DATE,
+      type: datatypes.DATE,
       defaultValue: new Date(),
-    }
+    },
   });
 
   return FileMaster;
