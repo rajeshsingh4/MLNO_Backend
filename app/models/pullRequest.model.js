@@ -5,6 +5,35 @@ module.exports = (sequelize, datatypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
+    action: {
+      type: datatypes.STRING
+    },
+    changeCommunicatedTo: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.users,
+        key: 'id'
+      }
+    },
+    field: {
+      type: datatypes.STRING
+    },
+    originalValue: {
+      type: datatypes.STRING
+    },
+    newValue: {
+      type: datatypes.STRING
+    },
+    mode: {
+      type: datatypes.STRING
+    },
+    ipaddress: {
+      type: datatypes.STRING
+    },
+    serviceRequest: {
+      type: datatypes.UUID,
+      defaultValue: datatypes.UUIDV4
+    },
     cardId: {
       type: datatypes.INTEGER,
       references: {
