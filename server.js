@@ -32,9 +32,10 @@ app.get("/", (req, res) => {
 });
 
 // routes
-require('./app/routes/fileMaster.routes')(app);
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/fileMaster.routes')(app);
+require('./app/routes/pullRequest.routes')(app);
 require('./app/routes/card.routes')(app);
 require('./app/routes/auditLog.routes')(app);
 
