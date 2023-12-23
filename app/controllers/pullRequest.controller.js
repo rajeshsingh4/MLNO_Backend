@@ -2,6 +2,7 @@ const db = require("../models");
 const PullRequest = db.pullrequest;
 const Card = db.card;
 const File = db.fileMaster;
+const User = db.user;
 
 exports.getPullRequest = async (req, res) => {
   try {
@@ -19,17 +20,18 @@ exports.getPullRequestByPullId = async (req, res) => {
       where: {
         id: id,
       },
-    };
-    if (req.query.fileDetails) {
-      findConditions.include.push({
-        model: File,
-      });
-    }
-    if (req.query.cardDetails) {
-        findConditions.include.push({
+      include: [
+        {
+          model: User
+        },
+        {
+          model: File,
+        },
+        {
           model: Card,
-        });
-    }
+        }
+      ]
+    };
     const pullRequestDetails = await PullRequest.findOne(findConditions);
     res.json(pullRequestDetails);
   } catch (error) {
