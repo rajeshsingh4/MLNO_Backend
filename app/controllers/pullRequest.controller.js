@@ -41,8 +41,9 @@ exports.getPullRequestByPullId = async (req, res) => {
 
 exports.createPullRequest = async (req, res) => {
     try {
-        console.log('received request, we are working on it');
-        res.json('received request, we are working on it');
+        const reqPayload = req.body;
+        const createRecord = PullRequest.create(reqPayload);
+        res.json(createRecord);
     } catch (error) {
         res.json({ message: error.message, status: 400 });
     }
