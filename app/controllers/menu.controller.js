@@ -27,21 +27,16 @@ exports.getMenuList = async (req, res) => {
           roleList.push(roles[i].id);
         }
       })
+
+      
     })
-    /*const menuList = await Menu.findAll({
-      include: {
-        model: Role,
-        as: 'roles',
-        attributes: ['id','name'],
-        through: { where: { roleId: 1 } }
-      }
-    });*/
+    
     const menuList = await Menu.findAll({
       include: {
         model: Role,
         as: 'roles',
         attributes: ['id','name'],
-        through: { where: { roleId: 0 } },
+        through: { where: { roleId: [1]} },
         required: true
       }
     });
