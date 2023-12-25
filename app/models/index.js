@@ -28,12 +28,20 @@ db.fileMaster = require("../models/fileMaster.model.js")(sequelize, Sequelize);
 db.card = require("../models/card.model.js")(sequelize, Sequelize);
 db.auditLog = require("../models/auditLog.model.js")(sequelize, Sequelize);
 db.cardUpdates = require("../models/cardUpdates.model.js")(sequelize, Sequelize);
+db.menu = require("../models/menu.model.js")(sequelize, Sequelize);
 
 db.role.belongsToMany(db.user, {
   through: "user_roles"
 });
 db.user.belongsToMany(db.role, {
   through: "user_roles"
+});
+
+db.role.belongsToMany(db.menu, {
+  through: "menu_roles"
+});
+db.menu.belongsToMany(db.role, {
+  through: "menu_roles"
 });
 
 db.fileMaster.hasMany(db.card);
