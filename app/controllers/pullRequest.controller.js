@@ -60,7 +60,7 @@ exports.createPullRequest = async (req, res) => {
         const createLogs = await PullRequestLog.create(logsData);
         console.log('pull request log entry created: ', createLogs);
         // create pull request
-        const createRecord = await PullRequest.create(reqPayload);
+        const createRecord = await PullRequest.create({ ...reqPayload, createdBy: req.userId, modifiedBy: req.userId, userId: req.userId });
         res.status(200).send(createRecord);
     } catch (error) {
         res.status(400).send({ status: 400, message: error.message });
