@@ -1,48 +1,25 @@
 const db = require("../models");
-const { authJwt } = require("../middleware");
-// const config = require("../config/auth.config");
-const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
-
-
 const Menu = db.menu;
 const Role = db.role;
 const User = db.user;
 
-// const Op = db.Sequelize.Op;
-
-// var jwt = require("jsonwebtoken");
-// var bcrypt = require("bcryptjs");
-
 exports.getMenuList = async (req, res) => {
   try {
-    console.log('------------- get UserID ROLES --------------');
-    User.findByPk(req.userId).then(user => {
-      console.log('------------- get roles -------------');
-      console.log( user );
-      var roleList =[];
-      user.getRoles().then(roles => {
-        console.log('------------- get roles Fetched -------------------->>',roles);
-        for (let i = 0; i < roles.length; i++) {
-          roleList.push(roles[i].id);
-        }
-      })
-
-      
-    })
-    
+    const user = await User.findByPk(req.userId);
+    const userRoles = await user.getRoles({
+      attributes: ['id']
+    });
     const menuList = await Menu.findAll({
       include: {
         model: Role,
         as: 'roles',
         attributes: ['id','name'],
-        through: { where: { roleId: [1]} },
+        through: { where: { roleId: userRoles } },
         required: true
       }
     });
-
-    res.json(menuList);
+    res.status(200).send(menuList);
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(400).send({ status: 400, message: error.message });
   }
 };

@@ -6,10 +6,14 @@ const User = db.user;
 
 exports.getPullRequest = async (req, res) => {
   try {
-    const pullrequest = await PullRequest.findAll();
-    res.json(pullrequest);
+    const pullrequest = await PullRequest.findAll({
+      order: [
+        ['updatedAt', 'DESC']
+      ]
+    });
+    res.status(200).send(pullrequest);
   } catch (error) {
-    res.json({ message: error.message, status: 404 });
+    res.status(400).send({ status: 400, message: error.message });
   }
 };
 
@@ -33,9 +37,9 @@ exports.getPullRequestByPullId = async (req, res) => {
       ]
     };
     const pullRequestDetails = await PullRequest.findOne(findConditions);
-    res.json(pullRequestDetails);
+    res.status(200).send(pullRequestDetails);
   } catch (error) {
-    res.json({ message: error.message, status: 404 });
+    res.status(400).send({ status: 400, message: error.message });
   }
 };
 
@@ -43,8 +47,8 @@ exports.createPullRequest = async (req, res) => {
     try {
         const reqPayload = req.body;
         const createRecord = PullRequest.create(reqPayload);
-        res.json(createRecord);
+        res.status(200).send(createRecord);
     } catch (error) {
-        res.json({ message: error.message, status: 400 });
+        res.status(400).send({ status: 400, message: error.message });
     }
 }

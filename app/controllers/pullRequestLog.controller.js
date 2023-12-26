@@ -1,23 +1,27 @@
 const db = require("../models");
 const AuditLog = db.auditLog;
 
-exports.getAllAuditLogs = async (req, res) => {
+exports.getAllPullRequestLogs = async (req, res) => {
   try {
-    const auditLogsAll = await AuditLog.findAll();
+    const auditLogsAll = await AuditLog.findAll({
+      order: [
+        ['updatedAt', 'DESC']
+      ]
+    });
     res.status(200).send(auditLogsAll);
   } catch (error) {
     res.status(400).send({ status: 400, message: error.message });
   }
 };
 
-exports.getAuditLogsForCard = async (req, res) => {
+exports.getPullRequestLogsById = async (req, res) => {
   try {
-    const cardLogs = await AuditLog.findAll({
+    const cardLogs = await AuditLog.findOne({
       where: {
-        cardId: req.params.id
+        id: req.params.id
       },
       order: [
-        ['createdAt', 'DESC']
+        ['updatedAt', 'DESC']
       ]
     });
     res.status(200).send(cardLogs);

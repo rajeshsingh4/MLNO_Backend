@@ -18,6 +18,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
+db.userDetails = require("../models/userDetails.model.js")(sequelize, Sequelize);
 db.role = require("../models/role.model.js")(sequelize, Sequelize);
 db.fileMaster = require("../models/fileMaster.model.js")(sequelize, Sequelize);
 db.card = require("../models/card.model.js")(sequelize, Sequelize);
@@ -26,6 +27,7 @@ db.pullrequest = require("../models/pullRequest.model.js")(
   Sequelize
 );
 db.auditLog = require("../models/auditLog.model.js")(sequelize, Sequelize);
+db.pullRequestLog = require("../models/pullRequestLog.model.js")(sequelize, Sequelize);
 db.cardUpdates = require("../models/cardUpdates.model.js")(sequelize, Sequelize);
 db.menu = require("../models/menu.model.js")(sequelize, Sequelize);
 
@@ -44,6 +46,9 @@ db.menu.belongsToMany(db.role, {
   through: "menu_roles"
 });
 
+//user details relationship
+db.userDetails.belongsTo(db.user);
+
 //file masters relationship
 db.fileMaster.belongsTo(db.user);
 
@@ -60,6 +65,11 @@ db.pullrequest.belongsTo(db.fileMaster);
 //audit logs relationship
 db.auditLog.belongsTo(db.user);
 db.auditLog.belongsTo(db.card);
+
+//pull request log relationship
+db.pullRequestLog.belongsTo(db.user);
+db.pullrequest.belongsTo(db.card);
+db.pullrequest.belongsTo(db.fileMaster);
 
 db.ROLES = ["user", "admin", "moderator"];
 

@@ -1,13 +1,7 @@
 const db = require("../models");
-// const config = require("../config/auth.config");
 const Card = db.card;
 const AuditLog = db.auditLog;
 const File = db.fileMaster;
-
-// const Op = db.Sequelize.Op;
-
-// var jwt = require("jsonwebtoken");
-// var bcrypt = require("bcryptjs");
 
 exports.getCardTracking = async (req, res) => {
   try {
@@ -20,9 +14,9 @@ exports.getCardTracking = async (req, res) => {
       }
     }
     const cardtracking = await Card.findAll(findAllConditions);
-    res.json(cardtracking);
+    res.status(200).send(cardtracking);
   } catch (error) {
-    res.json({ message: error.message });
+    res.status(400).send({ status:400, message: error.message });
   }
 };
 
@@ -53,9 +47,9 @@ exports.updateCardTracking = async (req, res) => {
         },
       }
     );
-    res.json(updatedTracking);
+    res.status(200).send(updatedTracking);
   } catch (error) {
     console.log("error updating record ", error);
-    res.json({ message: error.message });
+    res.status(400).send({ status: 400, message: error.message });
   }
 };

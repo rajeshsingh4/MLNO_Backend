@@ -34,11 +34,12 @@ app.get("/", (req, res) => {
 // routes
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
+require('./app/routes/menu.routes')(app);
 require('./app/routes/fileMaster.routes')(app);
 require('./app/routes/pullRequest.routes')(app);
 require('./app/routes/card.routes')(app);
 require('./app/routes/auditLog.routes')(app);
-require('./app/routes/menu.routes')(app);
+require('./app/routes/pullRequestLog.routes')(app);
 
 
 // set port, listen for requests
@@ -61,7 +62,5 @@ function initial() {
   Role.create({
     id: 3,
     name: "admin"
-  });
-
-  
+  });  
 }
