@@ -9,11 +9,7 @@ module.exports = (sequelize, datatypes) => {
       type: datatypes.STRING
     },
     changeCommunicatedTo: {
-      type: datatypes.INTEGER,
-      references: {
-        model: sequelize.models.users,
-        key: 'id'
-      }
+      type: datatypes.STRING
     },
     field: {
       type: datatypes.STRING
@@ -25,6 +21,9 @@ module.exports = (sequelize, datatypes) => {
       type: datatypes.STRING
     },
     mode: {
+      type: datatypes.STRING
+    },
+    comment: {
       type: datatypes.STRING
     },
     ipaddress: {
