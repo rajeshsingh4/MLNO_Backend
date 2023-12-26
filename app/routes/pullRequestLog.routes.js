@@ -1,3 +1,4 @@
+const { authJwt } = require("../middleware");
 const controller = require("../controllers/pullRequestLog.controller");
 
 module.exports = function(app) {
@@ -9,6 +10,6 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/pullrequestlog/all", controller.getAllPullRequestLogs);
-  app.get("/api/pullrequestlog/:id", controller.getPullRequestLogsById);
+  app.get("/api/pullrequestlog/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getAllPullRequestLogs);
+  app.get("/api/pullrequestlog/:id", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getPullRequestLogsById);
 };

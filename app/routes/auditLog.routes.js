@@ -10,6 +10,6 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/auditlog/all", controller.getAllAuditLogs);
-  app.get("/api/auditlog/card/:id", controller.getAuditLogsForCard);
+  app.get("/api/auditlog/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getAllAuditLogs);
+  app.get("/api/auditlog/card/:id",  [authJwt.verifyToken], [authJwt.getUserDetail], controller.getAuditLogsForCard);
 };
