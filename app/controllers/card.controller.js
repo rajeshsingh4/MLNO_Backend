@@ -34,8 +34,9 @@ exports.updateCardTracking = async (req, res) => {
       cardId: cardId,
       previous: JSON.stringify(cardtracking),
       current: JSON.stringify(reqPayload),
-      createdBy: 1,
-      modifiedBy: 1,
+      createdBy: req.userId,
+      modifiedBy: req.userId,
+      userId: req.userId,
     });
     console.log("audit log entry created ", auditLogRecord);
     // update the current record
