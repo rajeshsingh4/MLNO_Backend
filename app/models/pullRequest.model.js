@@ -33,6 +33,10 @@ module.exports = (sequelize, datatypes) => {
       type: datatypes.UUID,
       defaultValue: datatypes.UUIDV4
     },
+    status: {
+      type: datatypes.INTEGER,
+      defaultValue: 0
+    },
     cardId: {
       type: datatypes.INTEGER,
       references: {

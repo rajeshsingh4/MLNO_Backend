@@ -12,8 +12,8 @@ module.exports = (sequelize, datatypes) => {
         key: "id",
       },
     },
-    previous: { type: datatypes.STRING },
-    current: { type: datatypes.STRING },
+    previous: { type: datatypes.JSON },
+    current: { type: datatypes.JSON },
     createdBy: {
       type: datatypes.INTEGER,
       references: {
