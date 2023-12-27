@@ -10,6 +10,6 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/cardtrack/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getCardTracking);
-  app.put("/api/cardtrack/:id", [authJwt.verifyToken], [authJwt.getUserDetail], controller.updateCardTracking);
+  app.get("/api/cardtrack/all", [authJwt.verifyToken], controller.getCardTracking);
+  app.put("/api/cardtrack/:id", [authJwt.verifyToken], controller.updateCardTracking);
 };

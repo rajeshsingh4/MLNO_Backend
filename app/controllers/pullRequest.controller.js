@@ -7,11 +7,25 @@ const User = db.user;
 
 exports.getPullRequest = async (req, res) => {
   try {
-    const pullrequest = await PullRequest.findAll({
+    let findAllConditions = {
+      where: {},
       order: [
         ['updatedAt', 'DESC']
       ]
-    });
+    };
+    if (req.query.bureau) {
+      findAllConditions = {
+        ...findAllConditions,
+        include: {
+          model: File,
+          as: 'fileMaster',
+          attributes: ['BureauName', 'id'],
+          // through: { where: { BureauName: req.query.bureau } },
+          required: true
+        }
+      }
+    }
+    const pullrequest = await PullRequest.findAll(findAllConditions);
     res.status(200).send(pullrequest);
   } catch (error) {
     res.status(400).send({ status: 400, message: error.message });
@@ -45,27 +59,60 @@ exports.getPullRequestByPullId = async (req, res) => {
 };
 
 exports.createPullRequest = async (req, res) => {
-    try {
-        const reqPayload = req.body;
-        // create pull request
-        const createRecord = await PullRequest.create({ ...reqPayload, createdBy: req.userId, modifiedBy: req.userId, userId: req.userId });
+  try {
+    const reqPayload = req.body;
+    // create pull request
+    const createRecord = await PullRequest.create({ ...reqPayload, createdBy: req.userId, modifiedBy: req.userId, userId: req.userId });
 
-        // create pull request logs
-        const logsData = {
-          cardId: createRecord.cardId,
-          serviceRequestId: createRecord.serviceRequest,
-          pullRequestId: createRecord.id,
-          fileMasterId: createRecord.fileMasterId,
-          previous: JSON.stringify(createRecord),
-          current: JSON.stringify(createRecord),
-          createdBy: req.userId,
-          modifiedBy: req.userId,
-          userId: req.userId
-        };
-        const createLogs = await PullRequestLog.create(logsData);
-        console.log('pull request log entry created: ', createLogs);
-        res.status(200).send(createRecord);
-    } catch (error) {
-        res.status(400).send({ status: 400, message: error.message });
-    }
+    // create pull request logs
+    const logsData = {
+      cardId: createRecord.cardId,
+      serviceRequestId: createRecord.serviceRequest,
+      pullRequestId: createRecord.id,
+      fileMasterId: createRecord.fileMasterId,
+      previous: JSON.stringify(createRecord),
+      current: JSON.stringify(createRecord),
+      createdBy: req.userId,
+      modifiedBy: req.userId,
+      userId: req.userId
+    };
+    const createLogs = await PullRequestLog.create(logsData);
+    console.log('pull request log entry created: ', createLogs);
+    res.status(200).send(createRecord);
+  } catch (error) {
+    res.status(400).send({ status: 400, message: error.message });
+  }
+}
+
+exports.updatePullRequest = async (req, res) => {
+  try {
+    const reqPayload = req.body;
+    const currentRecord = await PullRequest.findByPk(req.params.id);
+
+    // update pull request
+    const updatedRecord = await PullRequest.update(
+      { ...reqPayload, modifiedBy: req.userId, updatedAt: new Date() },
+      {
+        where: req.params.id
+      }
+    );
+
+    // create pull request logs
+    const logsData = {
+      cardId: currentRecord.cardId,
+      serviceRequestId: currentRecord.serviceRequest,
+      pullRequestId: currentRecord.id,
+      fileMasterId: currentRecord.fileMasterId,
+      previous: JSON.stringify(currentRecord),
+      current: JSON.stringify(updatedRecord),
+      createdBy: req.userId,
+      modifiedBy: req.userId,
+      userId: req.userId
+    };
+    const createLogs = await PullRequestLog.create(logsData);
+    console.log('pull request log entry updated: ', createLogs);
+    res.status(200).send(updatedRecord);
+  } catch (error) {
+    res.status(400).send({ status: 400, message: error.message });
+  }
 }

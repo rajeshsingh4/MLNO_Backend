@@ -10,7 +10,8 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/pull-request/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getPullRequest);
-  app.get("/api/pull-request/:id", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getPullRequestByPullId);
-  app.post("/api/pull-request", [authJwt.verifyToken], [authJwt.getUserDetail], controller.createPullRequest);
+  app.get("/api/pull-request/all", [authJwt.verifyToken], controller.getPullRequest);
+  app.get("/api/pull-request/:id", [authJwt.verifyToken], controller.getPullRequestByPullId);
+  app.post("/api/pull-request", [authJwt.verifyToken], controller.createPullRequest);
+  app.put("/api/pull-request/:id", [authJwt.verifyToken], controller.updatePullRequest);
 };

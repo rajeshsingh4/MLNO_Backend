@@ -13,6 +13,18 @@ exports.getCardTracking = async (req, res) => {
         }]
       }
     }
+    if (req.query.bank) {
+      findAllConditions = {
+        where: {
+          Bank: req.query.bank
+        },
+        include: [
+          {
+            model: File
+          },
+        ]
+      }
+    }
     const cardtracking = await Card.findAll(findAllConditions);
     res.status(200).send(cardtracking);
   } catch (error) {
@@ -41,7 +53,7 @@ exports.updateCardTracking = async (req, res) => {
     console.log("audit log entry created ", auditLogRecord);
     // update the current record
     const updatedTracking = await Card.update(
-      reqPayload,
+      {...reqPayload, modifiedBy: req.userId, updatedAt: new Date() },
       {
         where: {
           id: cardId,
