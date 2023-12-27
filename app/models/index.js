@@ -68,6 +68,7 @@ db.auditLog.belongsTo(db.card);
 
 //pull request log relationship
 db.pullRequestLog.belongsTo(db.user);
+db.pullRequestLog.belongsTo(db.pullrequest);
 db.pullrequest.belongsTo(db.card);
 db.pullrequest.belongsTo(db.fileMaster);
 

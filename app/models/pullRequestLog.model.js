@@ -5,6 +5,16 @@ module.exports = (sequelize, datatypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
+    serviceRequestId: {
+      type: datatypes.UUID,
+    },
+    pullRequestId: {
+      type: datatypes.INTEGER,
+      references: {
+        model: sequelize.models.pullRequests,
+        key: "id",
+      },
+    },
     cardId: {
       type: datatypes.INTEGER,
       references: {

@@ -47,20 +47,23 @@ exports.getPullRequestByPullId = async (req, res) => {
 exports.createPullRequest = async (req, res) => {
     try {
         const reqPayload = req.body;
+        // create pull request
+        const createRecord = await PullRequest.create({ ...reqPayload, createdBy: req.userId, modifiedBy: req.userId, userId: req.userId });
+
         // create pull request logs
         const logsData = {
-          cardId: reqPayload.cardId,
-          fileMasterId: reqPayload.fileMasterId,
-          previous: JSON.stringify(cardtracking),
-          current: JSON.stringify(reqPayload),
+          cardId: createRecord.cardId,
+          serviceRequestId: createRecord.serviceRequest,
+          pullRequestId: createRecord.id,
+          fileMasterId: createRecord.fileMasterId,
+          previous: JSON.stringify(createRecord),
+          current: JSON.stringify(createRecord),
           createdBy: req.userId,
           modifiedBy: req.userId,
           userId: req.userId
         };
         const createLogs = await PullRequestLog.create(logsData);
         console.log('pull request log entry created: ', createLogs);
-        // create pull request
-        const createRecord = await PullRequest.create({ ...reqPayload, createdBy: req.userId, modifiedBy: req.userId, userId: req.userId });
         res.status(200).send(createRecord);
     } catch (error) {
         res.status(400).send({ status: 400, message: error.message });
