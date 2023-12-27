@@ -93,7 +93,9 @@ exports.updatePullRequest = async (req, res) => {
     const updatedRecord = await PullRequest.update(
       { ...reqPayload, modifiedBy: req.userId, updatedAt: new Date() },
       {
-        where: req.params.id
+        where: {
+          id: req.params.id
+        }
       }
     );
 
