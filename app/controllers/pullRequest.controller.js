@@ -19,8 +19,8 @@ exports.getPullRequest = async (req, res) => {
         include: {
           model: File,
           as: 'fileMaster',
-          attributes: ['BureauName', 'id'],
-          // through: { where: { BureauName: req.query.bureau } },
+          attributes: ['BureauName'],
+          where: { BureauName: req.query.bureau },
           required: true
         }
       }
