@@ -41,25 +41,29 @@ exports.updateCardTracking = async (req, res) => {
         id: cardId,
       },
     });
-    // create an entry in audit log table
-    const auditLogRecord = await AuditLog.create({
-      cardId: cardId,
-      previous: JSON.stringify(cardtracking),
-      current: JSON.stringify(reqPayload),
-      createdBy: req.userId,
-      modifiedBy: req.userId,
-      userId: req.userId,
-    });
-    console.log("audit log entry created ", auditLogRecord);
+
     // update the current record
+    const cardUpdateData = {...reqPayload, modifiedBy: req.userId, updatedAt: new Date() };
     const updatedTracking = await Card.update(
-      {...reqPayload, modifiedBy: req.userId, updatedAt: new Date() },
+      cardUpdateData,
       {
         where: {
           id: cardId,
         },
       }
     );
+
+    // create an entry in audit log table
+    const auditLogRecord = await AuditLog.create({
+      cardId: cardId,
+      previous: JSON.stringify(cardtracking),
+      current: JSON.stringify({...cardtracking.dataValues, ...cardUpdateData}),
+      createdBy: req.userId,
+      modifiedBy: req.userId,
+      userId: req.userId,
+    });
+    console.log("audit log entry created ", auditLogRecord);
+
     res.status(200).send(updatedTracking);
   } catch (error) {
     console.log("error updating record ", error);

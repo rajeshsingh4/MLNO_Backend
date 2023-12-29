@@ -87,11 +87,16 @@ exports.createPullRequest = async (req, res) => {
 exports.updatePullRequest = async (req, res) => {
   try {
     const reqPayload = req.body;
-    const currentRecord = await PullRequest.findByPk(req.params.id);
+    const currentRecord = await PullRequest.findOne({
+      where: {
+        id: req.params.id
+      }
+    });
 
     // update pull request
+    const updateData = { ...reqPayload, modifiedBy: req.userId, updatedAt: new Date() };
     const updatedRecord = await PullRequest.update(
-      { ...reqPayload, modifiedBy: req.userId, updatedAt: new Date() },
+      updateData,
       {
         where: {
           id: req.params.id
@@ -106,7 +111,7 @@ exports.updatePullRequest = async (req, res) => {
       pullRequestId: currentRecord.id,
       fileMasterId: currentRecord.fileMasterId,
       previous: JSON.stringify(currentRecord),
-      current: JSON.stringify(updatedRecord),
+      current: JSON.stringify({...currentRecord.dataValues, ...updateData}),
       createdBy: req.userId,
       modifiedBy: req.userId,
       userId: req.userId
