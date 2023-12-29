@@ -13,17 +13,17 @@ exports.signup = (req, res) => {
   User.create({
     username: req.body.username,
     email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
+    password: bcrypt.hashSync(req.body.password, 8),
   })
-    .then(user => {
+    .then((user) => {
       if (req.body.roles) {
         Role.findAll({
           where: {
             name: {
-              [Op.or]: req.body.roles
-            }
-          }
-        }).then(roles => {
+              [Op.or]: req.body.roles,
+            },
+          },
+        }).then((roles) => {
           user.setRoles(roles).then(() => {
             res.send({ message: "User registered successfully!" });
           });
@@ -35,7 +35,7 @@ exports.signup = (req, res) => {
         });
       }
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({ message: err.message });
     });
 };
@@ -43,10 +43,10 @@ exports.signup = (req, res) => {
 exports.signin = (req, res) => {
   User.findOne({
     where: {
-      username: req.body.username
-    }
+      username: req.body.username,
+    },
   })
-    .then(user => {
+    .then((user) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
       }
@@ -59,38 +59,46 @@ exports.signin = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password!"
+          message: "Invalid Password!",
         });
       }
 
-      const token = jwt.sign({ id: user.id },
-                              config.secret,
-                              {
-                                algorithm: 'HS256',
-                                allowInsecureKeySizes: true,
-                                expiresIn: 86400, // 24 hours
-                              });
-      console.log('--------------    Token     -------------->',token);
-      console.log('---- Roles Requested ----->',user.getRoles());
+      const token = jwt.sign({ id: user.id }, config.secret, {
+        algorithm: "HS256",
+        allowInsecureKeySizes: true,
+        expiresIn: 86400, // 24 hours
+      });
+
+      const decodedToken = jwt.decode(token);
+      console.log("--------------    Token     -------------->", token);
+      console.log("---- Roles Requested ----->", user.getRoles());
       var authorities = [];
-      user.getRoles().then(roles => {
-        console.log('---------- ----------- Roles received ------>',roles);
+      user.getRoles().then((roles) => {
+        console.log("---------- ----------- Roles received ------>", roles);
         for (let i = 0; i < roles.length; i++) {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
 
-        console.log('---------- ----------- authorities received ------>',authorities);
-        console.log('---------- ----------- ////  authorities received ------>');
+        console.log(
+          "---------- ----------- authorities received ------>",
+          authorities
+        );
+        console.log(
+          "---------- ----------- ////  authorities received ------>"
+        );
         res.status(200).send({
           id: user.id,
           username: user.username,
           email: user.email,
           roles: authorities,
-          accessToken: token
+          accessToken: token,
+          token_lifetime: 86400,
+          created_at: decodedToken.iat,
+          expires_in: decodedToken.exp
         });
       });
     })
-    .catch(err => {
+    .catch((err) => {
       res.status(500).send({ message: err.message });
     });
 };
