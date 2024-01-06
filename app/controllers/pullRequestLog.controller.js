@@ -5,9 +5,6 @@ exports.getAllPullRequestLogs = async (req, res) => {
   try {
     const findConditions = {
       where: {},
-      order: [
-        ['updatedAt', 'DESC']
-      ]
     };
     if (req.query.cardId) {
       findConditions.where.cardId = req.query.cardId;
