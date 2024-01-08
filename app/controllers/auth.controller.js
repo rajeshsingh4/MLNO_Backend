@@ -70,22 +70,12 @@ exports.signin = (req, res) => {
       });
 
       const decodedToken = jwt.decode(token);
-      console.log("--------------    Token     -------------->", token);
-      console.log("---- Roles Requested ----->", user.getRoles());
+
       var authorities = [];
       user.getRoles().then((roles) => {
-        console.log("---------- ----------- Roles received ------>", roles);
         for (let i = 0; i < roles.length; i++) {
           authorities.push("ROLE_" + roles[i].name.toUpperCase());
         }
-
-        console.log(
-          "---------- ----------- authorities received ------>",
-          authorities
-        );
-        console.log(
-          "---------- ----------- ////  authorities received ------>"
-        );
         res.status(200).send({
           id: user.id,
           username: user.username,
