@@ -40,6 +40,7 @@ require('./app/routes/pullRequest.routes')(app);
 require('./app/routes/card.routes')(app);
 require('./app/routes/auditLog.routes')(app);
 require('./app/routes/pullRequestLog.routes')(app);
+require('./app/routes/dashboard.routes')(app);
 
 
 // set port, listen for requests
