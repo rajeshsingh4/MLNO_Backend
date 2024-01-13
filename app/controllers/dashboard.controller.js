@@ -19,10 +19,25 @@ exports.getBankDashboard = async (req, res) => {
                 [sequelize.literal('COUNT(DISTINCT(Courier_Status))'), 'distinct_courier'],
             ]
         });
+        const recentFiles = await File.findAll({
+            limit: 5,
+            order: [['updatedAt', 'DESC']]
+        });
+        const recentCards = await Card.findAll({
+            limit: 5,
+            order: [['updatedAt', 'DESC']]
+        });
+        const recentPullRequests = await PullRequest.findAll({
+            limit: 5,
+            order: [['updatedAt', 'DESC']]
+        });
 
         const data = {
             totalCards,
-            bank: cards
+            bank: cards,
+            recentFiles,
+            recentCards,
+            recentPullRequests,
         }
         res.status(200).send(data);
     } catch (error) {
@@ -44,9 +59,21 @@ exports.getBureauDashboard = async (req, res) => {
                 [sequelize.literal('COUNT(DISTINCT(Courier_Status))'), 'distinct_courier'],
             ]
         });
+        const recentCards = await Card.findAll({
+            limit: 5,
+            order: [['updatedAt', 'DESC']]
+        });
+        const recentPullRequests = await PullRequest.findAll({
+            limit: 5,
+            order: [['updatedAt', 'DESC']]
+        });
+
         const data = {
             totalCards,
-            bureau: cards
+            bank: cards,
+            recentCards,
+            recentPullRequests,
+            recentFiles: [],
         }
         res.status(200).send(data);
     } catch (error) {
@@ -66,9 +93,17 @@ exports.getCourierDashboard = async (req, res) => {
                 [sequelize.literal('COUNT(DISTINCT(Courier_Status))'), 'distinct_courier'],
             ]
         });
+        const recentCards = await Card.findAll({
+            limit: 5,
+            order: [['updatedAt', 'DESC']]
+        });
+
         const data = {
             totalCards,
-            courier: cards
+            bank: cards,
+            recentCards,
+            recentFiles : [],
+            recentPullRequests: [],
         }
         res.status(200).send(data);
     } catch (error) {
