@@ -34,7 +34,7 @@ exports.getBankDashboard = async (req, res) => {
 
         const data = {
             totalCards,
-            bank: cards,
+            cards,
             recentFiles,
             recentCards,
             recentPullRequests,
@@ -70,7 +70,7 @@ exports.getBureauDashboard = async (req, res) => {
 
         const data = {
             totalCards,
-            bank: cards,
+            cards,
             recentCards,
             recentPullRequests,
             recentFiles: [],
@@ -100,7 +100,7 @@ exports.getCourierDashboard = async (req, res) => {
 
         const data = {
             totalCards,
-            bank: cards,
+            cards,
             recentCards,
             recentFiles : [],
             recentPullRequests: [],
