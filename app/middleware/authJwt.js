@@ -25,6 +25,27 @@ verifyToken = (req, res, next) => {
     });
 };
 
+deleteToken = (req, res, next) => {
+  let token = req.headers["x-access-token"];
+
+  if (!token) {
+    return res.status(403).send({
+      message: "No token provided!"
+    });
+  }
+
+  jwt.destroy(token,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).send({
+          message: err.message,
+        });
+      }
+      next();
+    });
+};
+
+
 isAdmin = (req, res, next) => {
   User.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
