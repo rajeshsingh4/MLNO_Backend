@@ -28,7 +28,6 @@ db.pullrequest = require("../models/pullRequest.model.js")(
 );
 db.auditLog = require("../models/auditLog.model.js")(sequelize, Sequelize);
 db.pullRequestLog = require("../models/pullRequestLog.model.js")(sequelize, Sequelize);
-db.cardUpdates = require("../models/cardUpdates.model.js")(sequelize, Sequelize);
 db.menu = require("../models/menu.model.js")(sequelize, Sequelize);
 
 
