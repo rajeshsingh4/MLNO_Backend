@@ -7,8 +7,15 @@ const sequelize = db.sequelize;
 
 exports.getBankDashboard = async (req, res) => {
     try {
-        const totalCards = await Card.count();
+        const totalCards = await Card.count({
+            where: {
+                Bank: req.organisation
+            }
+        });
         const cards = await Card.findAll({
+            where: {
+                Bank: req.organisation
+            },
             group: ['Bank', 'Bureau_Status', 'Courier_Status'],
             attributes: [
                 'Bank', 'Bureau_Status', 'Courier_Status',
@@ -24,6 +31,9 @@ exports.getBankDashboard = async (req, res) => {
             order: [['updatedAt', 'DESC']]
         });
         const recentCards = await Card.findAll({
+            where: {
+                Bank: req.organisation
+            },
             limit: 5,
             order: [['updatedAt', 'DESC']]
         });
