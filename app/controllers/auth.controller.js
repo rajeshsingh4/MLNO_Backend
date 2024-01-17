@@ -14,6 +14,7 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
+    type: req.body.type
   })
     .then((user) => {
       if (req.body.roles) {
@@ -44,6 +45,7 @@ exports.signin = (req, res) => {
   User.findOne({
     where: {
       username: req.body.username,
+      type: req.body.type
     },
   })
     .then((user) => {
@@ -84,7 +86,8 @@ exports.signin = (req, res) => {
           accessToken: token,
           token_lifetime: 86400,
           created_at: decodedToken.iat,
-          expires_in: decodedToken.exp
+          expires_in: decodedToken.exp,
+          user_type: type
         });
       });
     })
