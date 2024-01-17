@@ -14,7 +14,8 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-    type: req.body.type
+    type: req.body.type,
+    organisation: req.body.organisation
   })
     .then((user) => {
       if (req.body.roles) {
@@ -65,7 +66,7 @@ exports.signin = (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: user.id }, config.secret, {
+      const token = jwt.sign({ id: user.id, username: user.username, organisation: user.organisation, user_type: user.type }, config.secret, {
         algorithm: "HS256",
         allowInsecureKeySizes: true,
         expiresIn: 86400, // 24 hours
@@ -87,7 +88,8 @@ exports.signin = (req, res) => {
           token_lifetime: 86400,
           created_at: decodedToken.iat,
           expires_in: decodedToken.exp,
-          user_type: type
+          user_type: user.type,
+          organisation: user.organisation
         });
       });
     })

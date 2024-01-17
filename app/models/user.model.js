@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     type: {
       type: Sequelize.STRING
+    },
+    organisation: {
+      type: Sequelize.STRING
     }
   });
 

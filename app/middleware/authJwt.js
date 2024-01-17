@@ -3,12 +3,21 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const User = db.user;
 
+const USER_TYPES = ['superadmin', 'admin', 'bank', 'bureau', 'courier'];
+
 verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
     return res.status(403).send({
       message: "No token provided!"
+    });
+  }
+
+  const userTypeHeader = req.headers["x-user-type"];
+  if (!USER_TYPES.includes(userTypeHeader)) {
+    return res.status(403).send({
+      message: "Invalid user type!"
     });
   }
 
@@ -21,6 +30,8 @@ verifyToken = (req, res, next) => {
         });
       }
       req.userId = decoded.id;
+      req.userType = decoded.user_type;
+      req.organisation = decoded.organisation;
       next();
     });
 };
