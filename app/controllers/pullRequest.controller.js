@@ -11,6 +11,15 @@ exports.getPullRequest = async (req, res) => {
       where: {},
       order: [
         ['updatedAt', 'DESC']
+      ],
+      include: [
+        {
+          model: Card,
+          attributes: ['Bank', 'id'],
+          where: {
+            Bank: req.organisation
+          }
+        },
       ]
     };
     if (req.query.bureau) {

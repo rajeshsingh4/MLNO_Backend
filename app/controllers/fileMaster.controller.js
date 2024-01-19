@@ -13,7 +13,14 @@ var bcrypt = require("bcryptjs");
 exports.getFileTracking = async (req, res) => {
   try {
     const allFiles = await FileMaster.findAll({
-      include: [{ model: Card }]
+      include: [
+        {
+          model: Card,
+          where: {
+            Bank: req.organisation
+          }
+        }
+      ]
     });
     const allFilesUpdated = updateTATForFiles(allFiles);
     res.status(200).send(allFilesUpdated);

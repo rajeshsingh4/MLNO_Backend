@@ -39,7 +39,16 @@ exports.getBankDashboard = async (req, res) => {
         });
         const recentPullRequests = await PullRequest.findAll({
             limit: 5,
-            order: [['updatedAt', 'DESC']]
+            order: [['updatedAt', 'DESC']],
+            include: [
+                {
+                    model: Card,
+                    attributes: ['Bank', 'id'],
+                    where: {
+                        Bank: req.organisation
+                    }
+                },
+            ]
         });
 
         const data = {
@@ -57,8 +66,15 @@ exports.getBankDashboard = async (req, res) => {
 
 exports.getBureauDashboard = async (req, res) => {
     try {
-        const totalCards = await Card.count();
+        const totalCards = await Card.count({
+            where: {
+                Bank: req.organisation
+            }
+        });
         const cards = await Card.findAll({
+            where: {
+                Bank: req.organisation
+            },
             group: ['Bank', 'Bureau_Status', 'Courier_Status'],
             attributes: [
                 'Bank', 'Bureau_Status', 'Courier_Status',
@@ -70,12 +86,24 @@ exports.getBureauDashboard = async (req, res) => {
             ]
         });
         const recentCards = await Card.findAll({
+            where: {
+                Bank: req.organisation
+            },
             limit: 5,
             order: [['updatedAt', 'DESC']]
         });
         const recentPullRequests = await PullRequest.findAll({
             limit: 5,
-            order: [['updatedAt', 'DESC']]
+            order: [['updatedAt', 'DESC']],
+            include: [
+                {
+                    model: File,
+                    attributes: ['BureauName', 'id'],
+                    where: {
+                        BureauName: req.organisation
+                    }
+                },
+            ]
         });
 
         const data = {

@@ -5,25 +5,18 @@ const File = db.fileMaster;
 
 exports.getCardTracking = async (req, res) => {
   try {
-    let findAllConditions = {};
-    if (req.query.fileList) {
-      findAllConditions = {
-        include: [{
-          model: File
-        }]
-      }
-    }
-    if (req.query.bank) {
-      findAllConditions = {
-        where: {
-          Bank: req.query.bank
+    let findAllConditions = {
+      where: {
+        Bank: req.organisation,
+      },
+      include: [
+        {
+          model: File,
         },
-        include: [
-          {
-            model: File
-          },
-        ]
-      }
+      ]
+    };
+    if (req.query.fileId) {
+      findAllConditions.where['fileMasterId'] = req.query.fileId;
     }
     const cardtracking = await Card.findAll(findAllConditions);
     res.status(200).send(cardtracking);

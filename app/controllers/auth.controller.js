@@ -2,6 +2,7 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
 const Role = db.role;
+const UserDetails = db.userDetails;
 
 const Op = db.Sequelize.Op;
 
@@ -27,12 +28,14 @@ exports.signup = (req, res) => {
           },
         }).then((roles) => {
           user.setRoles(roles).then(() => {
+            UserDetails.create({ createdBy: req.userId, modifiedBy: req.userId, userId: user.id });
             res.send({ message: "User registered successfully!" });
           });
         });
       } else {
         // user role = 1
         user.setRoles([1]).then(() => {
+          UserDetails.create({ createdBy: req.userId, modifiedBy: req.userId, userId: user.id });
           res.send({ message: "User registered successfully!" });
         });
       }
