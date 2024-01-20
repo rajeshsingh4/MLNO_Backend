@@ -21,6 +21,22 @@ exports.moderatorBoard = (req, res) => {
   res.status(200).send("Moderator Content.");
 };
 
+exports.getAllUserList = async (req, res) => {
+  try {
+    const userList = await UserDetails.findAll({
+      include: {
+        model: User
+      }
+    });
+    res.status(200).send(userList);
+  } catch (err) {
+    res.status(400).send({
+      statu: 400,
+      message: err.message,
+    });
+  }
+}
+
 exports.getUserDetails = async (req, res) => {
   try {
     const userDetails = await UserDetails.findOne({

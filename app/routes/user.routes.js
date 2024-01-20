@@ -29,7 +29,8 @@ module.exports = function(app) {
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.adminBoard
   );
-
+  
+  app.get('/api/user/all', [authJwt.verifyToken], controller.getAllUserList);
   app.get('/api/userdetails', [authJwt.verifyToken], controller.getUserDetails);
   app.put('/api/changepassword', [authJwt.verifyToken], controller.changePassword);
 };
