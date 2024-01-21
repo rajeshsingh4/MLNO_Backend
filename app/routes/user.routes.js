@@ -32,5 +32,7 @@ module.exports = function(app) {
   
   app.get('/api/user/all', [authJwt.verifyToken], controller.getAllUserList);
   app.get('/api/userdetails', [authJwt.verifyToken], controller.getUserDetails);
+  app.post('/api/userdetails', [authJwt.verifyToken], controller.createNewUser);
+  app.put('/api/userdetails/:id', [authJwt.verifyToken], controller.updateUserDetails);
   app.put('/api/changepassword', [authJwt.verifyToken], controller.changePassword);
 };

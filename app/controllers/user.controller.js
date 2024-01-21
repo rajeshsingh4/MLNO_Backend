@@ -59,6 +59,92 @@ exports.getUserDetails = async (req, res) => {
   }
 };
 
+exports.createNewUser = async (req, res) => {
+  try {
+    const emailExists = await User.findOne({
+      where: {
+        email: req.body.email
+      }
+    });
+    if (emailExists) {
+      return res.status(400).send({
+        status: 400,
+        message: 'Email Already exists'
+      })
+    }
+    const userExists = await User.findOne({
+      where: {
+        username: req.body.username
+      }
+    });
+    if (userExists) {
+      return res.status(400).send({
+        status: 400,
+        message: 'Username already exists'
+      })
+    }
+    const user = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: bcrypt.hashSync('Password@12', 8),
+      type: req.body.type,
+      organisation: req.body.organisation
+    });
+    const userRoles = await user.setRoles([1]);
+    const { firstname, lastname, middlename, pincode, phone, address, bio } = req.body;
+    const userDetailsBody = { firstname, lastname, middlename, pincode, phone, address, bio, createdBy: req.userId, modifiedBy: req.userId, userId: user.id }
+    const userDetails = await UserDetails.create(userDetailsBody);
+    return res.status(200).send({
+      ...userDetails,
+      user: user,
+      roles: userRoles
+    });
+  } catch (err) {
+    return res.status(400).send({
+      statu: 400,
+      message: err.message,
+    });
+  }
+};
+
+exports.updateUserDetails = async (req, res) => {
+  try {
+    const userDetails = await User.findOne({
+      where: {
+        id: req.params.id
+      }
+    });
+    if (!userDetails) {
+      return res.status(404).send({
+        status: 404,
+        message: 'User Not found!'
+      });
+    } else {
+      await UserDetails.update(
+        {
+          ...req.body,
+          modifiedBy: req.userId,
+          updatedAt: new Date()
+        },
+        {
+          where: {
+            id: req.params.id
+          }
+        }
+      );
+      res.status(200).send({
+        status: 200,
+        message: 'User updated successfully',
+      });
+    }
+  } catch (err) {
+    res.status(400).send({
+      statu: 400,
+      message: err.message,
+    });
+  }
+};
+
 exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
