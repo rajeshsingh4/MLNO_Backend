@@ -10,8 +10,8 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/fileList/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getFileTracking);
-  app.get("/api/fileList/:id", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getFileTrackingById);
+  app.get("/api/fileList/all", [authJwt.verifyToken], controller.getFileTracking);
+  app.get("/api/fileList/:id", [authJwt.verifyToken], controller.getFileTrackingById);
   app.get("/api/bureauTAT/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getBureauTracking);
   app.get("/api/bureauData/:id", [authJwt.verifyToken], [authJwt.getUserDetail], controller.fetchBureauData);
   

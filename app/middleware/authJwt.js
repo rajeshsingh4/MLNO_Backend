@@ -5,7 +5,7 @@ const User = db.user;
 
 const USER_TYPES = ['superadmin', 'admin', 'bank', 'bureau', 'courier'];
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -36,7 +36,7 @@ verifyToken = (req, res, next) => {
     });
 };
 
-deleteToken = (req, res, next) => {
+const deleteToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -57,7 +57,7 @@ deleteToken = (req, res, next) => {
 };
 
 
-isAdmin = (req, res, next) => {
+const isAdmin = (req, res, next) => {
   User.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
       for (let i = 0; i < roles.length; i++) {
@@ -75,7 +75,7 @@ isAdmin = (req, res, next) => {
   });
 };
 
-isModerator = (req, res, next) => {
+const isModerator = (req, res, next) => {
   User.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
       for (let i = 0; i < roles.length; i++) {
@@ -92,14 +92,14 @@ isModerator = (req, res, next) => {
   });
 };
 
-getUserDetail = (req,res,next) => {
+const getUserDetail = (req,res,next) => {
   User.findByPk(req.userId).then(user => {
     req['userDetail']=user;
     next();
   })
 }
 
-isModeratorOrAdmin = (req, res, next) => {
+const isModeratorOrAdmin = (req, res, next) => {
   User.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
       for (let i = 0; i < roles.length; i++) {

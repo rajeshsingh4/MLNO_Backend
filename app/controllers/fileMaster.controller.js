@@ -1,18 +1,11 @@
 const db = require("../models");
-const config = require("../config/auth.config");
 const configNRWC = require("../config/global.config.js");
 const FileMaster = db.fileMaster;
 const Card = db.card;
-const AuditLog = db.auditLog;
-
-const Op = db.Sequelize.Op;
-
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
 
 exports.getFileTracking = async (req, res) => {
   try {
-    const allFiles = await FileMaster.findAll({
+    let findAllConditions = {
       include: [
         {
           model: Card,
@@ -21,7 +14,8 @@ exports.getFileTracking = async (req, res) => {
           }
         }
       ]
-    });
+    };
+    const allFiles = await FileMaster.findAll(findAllConditions);
     const allFilesUpdated = updateTATForFiles(allFiles);
     res.status(200).send(allFilesUpdated);
   } catch (error) {
