@@ -11,6 +11,8 @@ module.exports = function(app) {
   });
 
   app.get("/api/fileList/all", [authJwt.verifyToken], controller.getFileTracking);
+  app.get("/api/fileList/all/bank", [authJwt.verifyToken], controller.getPendingReportForBankFiles);
+  app.get("/api/fileList/all/bureau", [authJwt.verifyToken], controller.getPendingReportForBureauFiles);
   app.get("/api/fileList/:id", [authJwt.verifyToken], controller.getFileTrackingById);
   app.get("/api/bureauTAT/all", [authJwt.verifyToken], [authJwt.getUserDetail], controller.getBureauTracking);
   app.get("/api/bureauData/:id", [authJwt.verifyToken], [authJwt.getUserDetail], controller.fetchBureauData);

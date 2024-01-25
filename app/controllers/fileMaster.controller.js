@@ -23,6 +23,47 @@ exports.getFileTracking = async (req, res) => {
   }
 };
 
+// pending report for bank
+exports.getPendingReportForBankFiles = async (req, res) => {
+  try {
+    let findAllConditions = {
+      include: [
+        {
+          model: Card,
+          where: {
+            Bank: req.organisation
+          }
+        }
+      ]
+    };
+    const allFiles = await FileMaster.findAll(findAllConditions);
+    const allFilesUpdated = updateTATForFiles(allFiles);
+    res.status(200).send(allFilesUpdated);
+  } catch (error) {
+    res.status(400).send({ status: 400, message: error.message });
+  }
+};
+
+// pending reports for bureau
+exports.getPendingReportForBureauFiles = async (req, res) => {
+  try {
+    let findAllConditions = {
+      where: {
+        BureauName: req.organisation
+      },
+      include: [
+        {
+          model: Card
+        }
+      ]
+    };
+    const allFiles = await FileMaster.findAll(findAllConditions);
+    const allFilesUpdated = updateTATForFiles(allFiles);
+    res.status(200).send(allFilesUpdated);
+  } catch (error) {
+    res.status(400).send({ status: 400, message: error.message });
+  }
+};
 
 //search for specific Bank
 exports.getBureauTracking = async (req, res) => {
