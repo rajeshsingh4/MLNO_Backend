@@ -34,6 +34,11 @@ exports.getBankDashboard = async (req, res) => {
             where: {
                 Bank: req.organisation
             },
+            include: [
+                {
+                    model: File,
+                },
+            ],
             limit: 5,
             order: [['updatedAt', 'DESC']]
         });
@@ -89,6 +94,11 @@ exports.getBureauDashboard = async (req, res) => {
             where: {
                 Bank: req.organisation
             },
+            include: [
+                {
+                    model: File,
+                },
+            ],
             limit: 5,
             order: [['updatedAt', 'DESC']]
         });
