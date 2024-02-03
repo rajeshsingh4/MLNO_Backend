@@ -14,4 +14,7 @@ module.exports = function(app) {
   app.get("/api/pull-request/:id", [authJwt.verifyToken], controller.getPullRequestByPullId);
   app.post("/api/pull-request", [authJwt.verifyToken], controller.createPullRequest);
   app.put("/api/pull-request/:id", [authJwt.verifyToken], controller.updatePullRequest);
+
+  app.get("/api/pull-request/dashboard/bank", [authJwt.verifyToken], controller.getBankPullRequestDashboard);
+  app.get("/api/pull-request/dashboard/bureau", [authJwt.verifyToken], controller.getBureauPullRequestDashboard);
 };

@@ -5,6 +5,8 @@ const Card = db.card;
 const File = db.fileMaster;
 const User = db.user;
 
+const sequelize = db.sequelize;
+
 exports.getPullRequest = async (req, res) => {
   try {
     let findAllConditions = {
@@ -130,5 +132,45 @@ exports.updatePullRequest = async (req, res) => {
     res.status(200).send(updatedRecord);
   } catch (error) {
     res.status(400).send({ status: 400, message: error.message });
+  }
+}
+
+exports.getBankPullRequestDashboard = async (req, res) => {
+  try {
+    const cards = await Card.findAll({
+      where: {
+          Bank: req.organisation
+      },
+      group: ['Bank', 'Bureau_Status', 'Courier_Status'],
+      attributes: [
+          'Bank', 'Bureau_Status', 'Courier_Status',
+          [sequelize.fn('COUNT', sequelize.col('Bank')), 'total_bank_records'],
+          [sequelize.fn('COUNT', sequelize.col('Bureau_Status')), 'total_bureau_status'],
+          [sequelize.fn('COUNT', sequelize.col('Courier_Status')), 'total_courier_status'],
+      ]
+    });
+    res.status(200).send(cards);
+  } catch (error) {
+    res.status(400).send({ status:400, message: error.message });
+  }
+}
+
+exports.getBureauPullRequestDashboard = async (req, res) => {
+  try {
+    const cards = await Card.findAll({
+      where: {
+          Bank: req.organisation
+      },
+      group: ['Bank', 'Bureau_Status', 'Courier_Status'],
+      attributes: [
+          'Bank', 'Bureau_Status', 'Courier_Status',
+          [sequelize.fn('COUNT', sequelize.col('Bank')), 'total_bank_records'],
+          [sequelize.fn('COUNT', sequelize.col('Bureau_Status')), 'total_bureau_status'],
+          [sequelize.fn('COUNT', sequelize.col('Courier_Status')), 'total_courier_status'],
+      ]
+    });
+    res.status(200).send(cards);
+  } catch (error) {
+    res.status(400).send({ status:400, message: error.message });
   }
 }
