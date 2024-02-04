@@ -10,6 +10,8 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/cardtrack/all", [authJwt.verifyToken], controller.getCardTracking);
+  app.get("/api/cardtrack/bank/all", [authJwt.verifyToken], controller.getCardTrackingForBank);
+  app.get("/api/cardtrack/bureau/all", [authJwt.verifyToken], controller.getCardTrackingForBureau);
   app.put("/api/cardtrack/:id", [authJwt.verifyToken], controller.updateCardTracking);
+  app.post("/api/cardtrack/:id/courier/start", [authJwt.verifyToken], controller.sendCardTrackingToCourier);
 };
