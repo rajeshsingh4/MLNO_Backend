@@ -3,18 +3,32 @@ const Card = db.card;
 const File = db.fileMaster;
 const PullRequest = db.pullrequest;
 // const DataTypes = db.Sequelize;
+const Op = db.Sequelize.Op;
 const sequelize = db.sequelize;
 
 exports.getBankDashboard = async (req, res) => {
     try {
+        let sortByConditions = {};
+        if (req.query.sortType === 'all') {
+            sortByConditions = {};
+        } else if (req.query.startDate && req.query.endDate) {
+            sortByConditions = {
+                createdAt: {
+                    [Op.between]: [new Date(req.query.startDate), new Date(req.query.endDate)]
+                }
+            };
+        }
+
         const totalCards = await Card.count({
             where: {
-                Bank: req.organisation
+                Bank: req.organisation,
+                ...sortByConditions
             }
         });
         const cards = await Card.findAll({
             where: {
-                Bank: req.organisation
+                Bank: req.organisation,
+                ...sortByConditions
             },
             group: ['Bank', 'Bureau_Status', 'Courier_Status'],
             attributes: [
@@ -71,14 +85,26 @@ exports.getBankDashboard = async (req, res) => {
 
 exports.getBureauDashboard = async (req, res) => {
     try {
+        let sortByConditions = {};
+        if (req.query.sortType === 'all') {
+            sortByConditions = {};
+        } else if (req.query.startDate && req.query.endDate) {
+            sortByConditions = {
+                createdAt: {
+                    [Op.between]: [new Date(req.query.startDate), new Date(req.query.endDate)]
+                }
+            };
+        }
         const totalCards = await Card.count({
             where: {
-                Bank: req.organisation
+                Bank: req.organisation,
+                ...sortByConditions
             }
         });
         const cards = await Card.findAll({
             where: {
-                Bank: req.organisation
+                Bank: req.organisation,
+                ...sortByConditions
             },
             group: ['Bank', 'Bureau_Status', 'Courier_Status'],
             attributes: [
