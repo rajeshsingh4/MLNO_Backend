@@ -40,7 +40,30 @@ exports.getBankDashboard = async (req, res) => {
                 [sequelize.literal('COUNT(DISTINCT(Courier_Status))'), 'distinct_courier'],
             ]
         });
+        const pendingFiles = await File.findAll({
+            include: [
+                {
+                  model: Card,
+                  where: {
+                    Bank: req.organisation,
+                    ...sortByConditions,
+                    Courier_Status: {
+                        [Op.or]: [0, null]
+                    },
+                  }
+                }
+            ],
+            order: [['id', 'ASC']]
+        });
         const recentFiles = await File.findAll({
+            include: [
+                {
+                  model: Card,
+                  where: {
+                    Bank: req.organisation
+                  }
+                }
+            ],
             limit: 5,
             order: [['updatedAt', 'DESC']]
         });
@@ -73,6 +96,7 @@ exports.getBankDashboard = async (req, res) => {
         const data = {
             totalCards,
             cards,
+            pendingFiles,
             recentFiles,
             recentCards,
             recentPullRequests,
