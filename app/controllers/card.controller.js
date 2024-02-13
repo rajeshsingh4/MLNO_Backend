@@ -2,12 +2,16 @@ const db = require("../models");
 const Card = db.card;
 const AuditLog = db.auditLog;
 const File = db.fileMaster;
+const Op = db.Sequelize.Op;
 
 exports.getCardTrackingForBank = async (req, res) => {
   try {
     let findAllConditions = {
       where: {
         Bank: req.organisation,
+        Bureau_Status: {
+          [Op.or]: [0, null]
+      },
       },
       include: [
         {
@@ -28,6 +32,11 @@ exports.getCardTrackingForBank = async (req, res) => {
 exports.getCardTrackingForBureau = async (req, res) => {
   try {
     let findAllConditions = {
+      where: {
+        Bureau_Status: {
+          [Op.or]: [0, null]
+        },
+      },
       include: [
         {
           model: File,

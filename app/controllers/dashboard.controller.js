@@ -47,7 +47,7 @@ exports.getBankDashboard = async (req, res) => {
                   where: {
                     Bank: req.organisation,
                     ...sortByConditions,
-                    Courier_Status: {
+                    Bureau_Status: {
                         [Op.or]: [0, null]
                     },
                   }
