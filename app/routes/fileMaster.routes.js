@@ -10,6 +10,8 @@ module.exports = function(app) {
     next();
   });
 
+  app.post("/api/fileList/upload", [authJwt.verifyToken], controller.uploadMasterFile);
+
   app.get("/api/fileList/all", [authJwt.verifyToken], controller.getFileTracking);
   app.get("/api/fileList/all/bank", [authJwt.verifyToken], controller.getPendingReportForBankFiles);
   app.get("/api/fileList/all/bureau", [authJwt.verifyToken], controller.getPendingReportForBureauFiles);

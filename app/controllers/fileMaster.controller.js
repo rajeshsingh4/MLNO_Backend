@@ -335,3 +335,35 @@ exports.getFileTrackingById = async (req, res) => {
     res.status(400).send({ status: 400, message: error.message });
   }
 };
+
+exports.uploadMasterFile = async (req, res) => {
+  try {
+    const { file, cards } = res.body;
+    // create file
+    const fileCreated = await FileMaster.create({
+      fileName: file.name,
+      DataProcessor: file.dataProcessor,
+      BureauName: file.bureauName,
+      fileAttribute: file.details,
+      CutOffTime: file.cutOffTime,
+      createdBy: 1,
+      modifiedBy: 1,
+    });
+    // create cards
+    const modifiedCardsData = cards.map(item => {
+      item.fileMasterId = fileCreated.id;
+      item.createdBy = 1;
+      item.modifiedBy = 1;
+      item.createdAt = new Date();
+      item.modifiedAt = new Date();
+      return item;
+    });
+    const bulkCardsCreated = await Card.bulkCreate(modifiedCardsData);
+    res.status(200).send({
+      cards: bulkCardsCreated,
+      file: fileCreated
+    });
+  } catch (error) {
+    res.status(400).send({ status: 400, message: error.message });
+  }
+}
