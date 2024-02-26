@@ -338,7 +338,7 @@ exports.getFileTrackingById = async (req, res) => {
 
 exports.uploadMasterFile = async (req, res) => {
   try {
-    const { file, cards } = res.body;
+    const { file, cards } = req.body;
     // create file
     const fileCreated = await FileMaster.create({
       fileName: file.name,
@@ -348,6 +348,7 @@ exports.uploadMasterFile = async (req, res) => {
       CutOffTime: file.cutOffTime,
       createdBy: 1,
       modifiedBy: 1,
+      userId: 1,
     });
     // create cards
     const modifiedCardsData = cards.map(item => {
