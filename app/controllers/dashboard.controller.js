@@ -121,14 +121,24 @@ exports.getBureauDashboard = async (req, res) => {
         }
         const totalCards = await Card.count({
             where: {
-                Bank: req.organisation,
                 ...sortByConditions
+            },
+            include: {
+                model: File,
+                where: {
+                    BureauName: req.organisation
+                }
             }
         });
         const cards = await Card.findAll({
             where: {
-                Bank: req.organisation,
                 ...sortByConditions
+            },
+            include: {
+                model: File,
+                where: {
+                    BureauName: req.organisation
+                }
             },
             group: ['Bank', 'Bureau_Status', 'Courier_Status'],
             attributes: [
@@ -141,14 +151,12 @@ exports.getBureauDashboard = async (req, res) => {
             ]
         });
         const recentCards = await Card.findAll({
-            where: {
-                Bank: req.organisation
+            include: {
+                model: File,
+                where: {
+                    BureauName: req.organisation
+                }
             },
-            include: [
-                {
-                    model: File,
-                },
-            ],
             limit: 5,
             order: [['updatedAt', 'DESC']]
         });
