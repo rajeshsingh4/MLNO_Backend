@@ -10,6 +10,8 @@ module.exports = function(app) {
     next();
   });
 
+  app.post("/api/fileList/uploadFile", controller.readNUploadFile);
+
   app.post("/api/fileList/upload", [authJwt.verifyToken], controller.uploadMasterFile);
 
   app.get("/api/fileList/all", [authJwt.verifyToken], controller.getFileTracking);

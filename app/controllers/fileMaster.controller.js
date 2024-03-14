@@ -1,3 +1,6 @@
+const fs = require('node:fs');
+const path = require('path');
+var xlsx = require('node-xlsx').default;
 const db = require("../models");
 const configNRWC = require("../config/global.config.js");
 const FileMaster = db.fileMaster;
@@ -365,6 +368,70 @@ exports.uploadMasterFile = async (req, res) => {
       file: fileCreated
     });
   } catch (error) {
+    res.status(400).send({ status: 400, message: error.message });
+  }
+}
+
+exports.readNUploadFile = async (req, res) => {
+  try {
+    const readFolderPath = 'files/read';
+    const copyFolderPath = 'files/write';
+    if (!fs.existsSync(readFolderPath)) {
+      res.status(400).send({ status: 400, message: 'Folder does not exist, please create the folder or specify correct path to read from' });
+    } else {
+      fs.readdir(readFolderPath, null, async (errorFolder, files) => {
+        if (errorFolder) {
+          console.error('There was and error reading folder ', readFolderPath);
+          console.error(errorFolder);
+          res.status(400).send({ status: 400, message: 'There was an error reading the folder path for the files. Please contact administrator', errorDetails: errorFolder });
+        } else {
+          const file = path.join(readFolderPath, files[0]);
+          const data  = xlsx.parse(file);
+          const fileDetails = {
+            file: {
+              name: files[0],
+              details: JSON.stringify({ name: files[0], filePath: file }),
+              dataProcessor: 'xlsx-parser',
+              bureauName: 'Bureau 1',
+              cutOffTime: new Date(),
+            },
+            cards: data,
+          };
+          return res.send(fileDetails);
+
+          // create file
+          const fileCreated = await FileMaster.create({
+            fileName: fileDetails.file.name,
+            DataProcessor: fileDetails.file.dataProcessor,
+            BureauName: fileDetails.file.bureauName,
+            fileAttribute: fileDetails.file.details,
+            CutOffTime: fileDetails.file.cutOffTime,
+            createdBy: 1,
+            modifiedBy: 1,
+            userId: 1,
+          });
+          // create cards
+          const modifiedCardsData = fileDetails.cards.map(item => {
+            item.fileMasterId = fileCreated.id;
+            item.createdBy = 1;
+            item.modifiedBy = 1;
+            item.createdAt = new Date();
+            item.modifiedAt = new Date();
+            return item;
+          });
+          const bulkCardsCreated = await Card.bulkCreate(modifiedCardsData);
+
+          // move the file to different directory
+
+          res.status(200).send({
+            cards: bulkCardsCreated,
+            file: fileCreated
+          });
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error reading file', error);
     res.status(400).send({ status: 400, message: error.message });
   }
 }
